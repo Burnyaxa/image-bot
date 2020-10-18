@@ -9,8 +9,8 @@ namespace image_bot.Models
 {
     public class AppSettings
     {
-        public static string Url { get; } = JObject.Parse("Properties/botSettings.json")["Url"].ToString();
+        public static string Url { get; } = JObject.Parse("Properties/botSettings.json")["url"].ToString();
         public static string Name { get; } = "image-bot";
-        public static string Key { get; } = JObject.Parse("Properties/botSettings.json")["Key"].ToString();
+        public static string Key { get; } = JObject.Parse("Properties/botSettings.json")["key"].ToString();
     }
 }
