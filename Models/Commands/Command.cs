@@ -2,7 +2,7 @@
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace TelegrammAspMvcDotNetCoreBot.Models.Commands
+namespace image_bot.Models.Commands
 {
     public abstract class Command
     {
