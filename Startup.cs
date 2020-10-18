@@ -18,7 +18,9 @@ namespace image_bot
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            var builder = new ConfigurationBuilder().AddJsonFile("Properties/botSettings.json")
+                .AddConfiguration(configuration);
+            Configuration = builder.Build();
         }
 
         public IConfiguration Configuration { get; }
