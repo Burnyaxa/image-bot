@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore;
-
+using image_bot.Models;
 namespace image_bot
 {
     public class Startup
@@ -58,6 +58,9 @@ namespace image_bot
             {
                 endpoints.MapControllers();
             });
+
+            Bot.GetBotClientAsync().Wait();
+            
         }
     }
 }
