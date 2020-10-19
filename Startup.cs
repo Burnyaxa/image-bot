@@ -40,26 +40,24 @@ namespace image_bot
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
-
+            //app.UseHttpsRedirection();
+            Bot.GetBotClientAsync().Wait();
             app.UseRouting();
 
-            app.UseAuthorization();
+           // app.UseAuthorization();
 
-            app.UseSwagger();
+            //app.UseSwagger();
 
-            app.UseSwaggerUI(c =>
-            {
-                c.RoutePrefix = "swagger/ui";
-                c.SwaggerEndpoint("swagger/v1/swagger.json", "My API V1");
-            });
+            //app.UseSwaggerUI(c =>
+            //{
+            //    c.RoutePrefix = "swagger/ui";
+            //    c.SwaggerEndpoint("swagger/v1/swagger.json", "My API V1");
+            //});
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
-
-            Bot.GetBotClientAsync().Wait();
+             app.UseEndpoints(endpoints =>
+             {
+                 endpoints.MapControllers();
+             });
             
         }
     }
