@@ -10,6 +10,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Debug;
+using Swashbuckle.AspNetCore;
+using image_bot.Models;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Http;
+using Microsoft.OpenApi.Models;
 
 namespace image_bot
 {
@@ -17,7 +23,9 @@ namespace image_bot
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            var builder = new ConfigurationBuilder().AddJsonFile("Properties/botSettings.json")
+                .AddConfiguration(configuration);
+            Configuration = builder.Build();
         }
 
         public IConfiguration Configuration { get; }
@@ -25,7 +33,27 @@ namespace image_bot
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllersWithViews(option =>
+            {
+                option.EnableEndpointRouting = false;
+                option.Filters.Add(new IgnoreAntiforgeryTokenAttribute());
+            }).AddNewtonsoftJson();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "Bot API",
+                    Description = "Telegram bot ASP.NET Core Web API",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Artem Supryhan",
+                        Email = "suprigan.artem1@gmail.com",
+                        Url = new Uri("https://t.me/burnyaxa"),
+                    }
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -36,16 +64,31 @@ namespace image_bot
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            app.UseMvc(ConfigureRoutes);
+
+            Bot.GetBotClientAsync().Wait();
 
             app.UseRouting();
 
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
+            app.UseSwagger(c =>
             {
-                endpoints.MapControllers();
+                c.SerializeAsV2 = true;
             });
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.RoutePrefix = string.Empty;
+            });
+            app.Run(async (context) =>
+            {
+                await context.Response.WriteAsync("Hello World!");
+            });
+        }
+
+        private void ConfigureRoutes(IRouteBuilder routeBuilder)
+        {
+            routeBuilder.MapRoute("Default", "{controller=Home}/{action=Index}/{id?}");
         }
     }
 }
