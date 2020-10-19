@@ -38,6 +38,7 @@ namespace image_bot
                 option.EnableEndpointRouting = false;
                 option.Filters.Add(new IgnoreAntiforgeryTokenAttribute());
             }).AddNewtonsoftJson();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -53,7 +54,6 @@ namespace image_bot
                     }
                 });
             });
-            //services.AddLogging();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -63,8 +63,11 @@ namespace image_bot
             {
                 app.UseDeveloperExceptionPage();
             }
+
             app.UseMvc(ConfigureRoutes);
+
             Bot.GetBotClientAsync().Wait();
+
             app.UseRouting();
 
             app.UseSwagger(c =>

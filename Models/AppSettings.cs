@@ -4,15 +4,24 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Text.Json;
 using Newtonsoft.Json.Linq;
+using System.IO;
 
 namespace image_bot.Models
 {
-    public class AppSettings
+    public static class AppSettings
     {
-        //public static string Url { get; } = JObject.Parse("botSettings.json")["url"].ToString();
-        public static string Url { get; } = "https://e00530a975c7.ngrok.io/{0}";
-        public static string Name { get; } = "image-bot";
-        public static string Key { get; } = "1321181687:AAEXE9VNGEmwnoOy8zGkZz-tu6ZX-yAn17k";
-        //public static string Key { get; } = JObject.Parse("botSettings.json")["key"].ToString();
+        static AppSettings()
+        {
+            using (StreamReader r = new StreamReader(@"Properties\botSettings.json"))
+            { 
+                string json = r.ReadToEnd();
+                Url = JObject.Parse(json)["url"].ToString();
+                Name = JObject.Parse(json)["name"].ToString();
+                Key = JObject.Parse(json)["key"].ToString();
+            }
+        }
+        public static string Url { get; }
+        public static string Name { get; }
+        public static string Key { get; }
     }
 }
