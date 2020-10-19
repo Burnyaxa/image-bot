@@ -7,23 +7,34 @@ using Microsoft.AspNetCore.Mvc;
 using Telegram.Bot.Types;
 using image_bot.Models;
 using System.Diagnostics;
+using Microsoft.Extensions.Logging;
+
 namespace image_bot.Controllers
 {
     [Route("api/message")]
     [ApiController]
     public class MessageController : ControllerBase
     {
+        private readonly ILogger _logger;
+
+        public MessageController(ILogger<MessageController> logger)
+        {
+            _logger = logger;
+        }
         // GET api/values
         [HttpGet]
         public string Get()
         {
+            _logger.LogInformation("ok.");
             return "Method GET unuvalable";
         }
         // POST api/values
         [Route("update")]
+        [IgnoreAntiforgeryToken]
         [HttpPost]
         public async Task<OkResult> Update([FromBody]Update update)
         {
+            _logger.LogInformation("ok.");
             if (update == null) return Ok();
 
             var commands = Bot.Commands;

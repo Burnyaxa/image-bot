@@ -12,7 +12,7 @@ namespace image_bot.Models.Commands
 
         public override bool Contains(Message message)
         {
-            if (message.Type != Telegram.Bot.Types.Enums.MessageType.Text)
+            if (message == null || message.Type != Telegram.Bot.Types.Enums.MessageType.Text)
                 return false;
 
             return message.Text.Contains(this.Name);
