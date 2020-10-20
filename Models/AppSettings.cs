@@ -18,10 +18,12 @@ namespace image_bot.Models
                 Url = JObject.Parse(json)["url"].ToString();
                 Name = JObject.Parse(json)["name"].ToString();
                 Key = JObject.Parse(json)["key"].ToString();
+                SQLServerConnection = JObject.Parse(json)["sqlserverConnection"].ToString();
             }
         }
         public static string Url { get; }
         public static string Name { get; }
         public static string Key { get; }
+        public static string SQLServerConnection { get; }
     }
 }
