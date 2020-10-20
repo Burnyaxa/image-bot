@@ -7,10 +7,8 @@ namespace image_bot.Models
 {
     public enum ApplyFilterStus
     {
-        Inicial,
-        ImageSent,
-        FilterSelected,
-        Done
+        AwaitingImage,
+        AwaitingFilterSelect
     }
     public class ApplyFilterRequest
     {

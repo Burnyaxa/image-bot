@@ -13,7 +13,7 @@ namespace image_bot.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().Property(u => u.CurentCommand).HasDefaultValue(BotCommand.Start);
-            modelBuilder.Entity<ApplyFilterRequest>().Property(a => a.Status).HasDefaultValue(ApplyFilterStus.Inicial);
+            modelBuilder.Entity<ApplyFilterRequest>().Property(a => a.Status).HasDefaultValue(ApplyFilterStus.AwaitingImage);
         }
 
         public UsersState()
