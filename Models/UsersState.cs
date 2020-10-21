@@ -15,10 +15,11 @@ namespace image_bot.Models
         {
             modelBuilder.Entity<User>().Property(u => u.CurentCommand).HasDefaultValue(BotCommand.Start);
             modelBuilder.Entity<ApplyFilterRequest>().Property(a => a.Status).HasDefaultValue(ApplyFilterStus.AwaitingImage);
-            modelBuilder.Entity<ImageResizeRequest>().Property(i => i.Url).HasDefaultValue(null);
+            modelBuilder.Entity<ImageResizeRequest>().Property(i => i.Width).HasDefaultValue(null);
+            modelBuilder.Entity<ImageResizeRequest>().Property(i => i.Height).HasDefaultValue(null);
         }
 
-        public UsersState()
+        public UsersState(DbContextOptions<UsersState> options) : base(options)
         {
             Database.EnsureCreated();
         }

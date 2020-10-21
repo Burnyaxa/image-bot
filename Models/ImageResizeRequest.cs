@@ -19,6 +19,7 @@ namespace image_bot.Models
         /// has default value inicial in UsersState
         /// </summary>
         public ImageResizeStatus Status { get; set; }
-        public string Url { get; set; }
+        public int Height { get; set; }
+        public int Width { get; set; }
     }
 }

@@ -39,7 +39,7 @@ namespace image_bot
                 option.EnableEndpointRouting = false;
                 option.Filters.Add(new IgnoreAntiforgeryTokenAttribute());
             }).AddNewtonsoftJson();
-
+            services.AddScoped<DbContext, UsersState>();
             services.AddDbContext<UsersState>(options =>
                 options.UseSqlServer(AppSettings.SQLServerConnection));
 

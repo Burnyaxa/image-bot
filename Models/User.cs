@@ -23,7 +23,7 @@ namespace image_bot.Models
     {
         public int Id { get; set; }
         
-        public int ChatId { get; set; }
+        public long ChatId { get; set; }
 
         /// <summary>
         /// Command that is currently used

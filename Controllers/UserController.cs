@@ -18,7 +18,7 @@ namespace image_bot.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(User user)
+        public async Task<IActionResult> Create(User user)
         {
             if(db.Users.Any(c => c.ChatId == user.ChatId))
             {
