@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using image_bot.Models;
+using Newtonsoft.Json;
+
 namespace image_bot.Controllers
 {
     [Route("api/user")]
@@ -16,6 +18,7 @@ namespace image_bot.Controllers
         {
             db = context;
         }
+
         [Route("create")]
         [HttpPost]
         public async Task<IActionResult> Create(BotUser user)
@@ -28,6 +31,7 @@ namespace image_bot.Controllers
             await db.SaveChangesAsync();
             return Ok();
         }
+
         [Route("update")]
         [HttpPost]
         public async Task<IActionResult> Update(BotUser user)
@@ -41,6 +45,24 @@ namespace image_bot.Controllers
             return BadRequest();
         }
 
+        [Route("get-operation")]
+        [HttpPost]
+        public IActionResult GetOperation(BotUser user)
+        {
+            if (db.BotUsers.Any(c => c.ChatId == user.ChatId))
+            {
+                BotUser botUser = db.BotUsers.FirstOrDefault(u => u.ChatId == user.ChatId);
+                return new ObjectResult(botUser.CurentCommand);
+            }
+            return BadRequest();
+        }
+
+        [Route("get-status")]
+        [HttpPost]
+        public IActionResult GetStatus(BotUser user)
+        {
+            //TODO
+        }
 
     }
 }
