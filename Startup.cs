@@ -16,6 +16,7 @@ using image_bot.Models;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Http;
 using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace image_bot
 {
@@ -38,6 +39,9 @@ namespace image_bot
                 option.EnableEndpointRouting = false;
                 option.Filters.Add(new IgnoreAntiforgeryTokenAttribute());
             }).AddNewtonsoftJson();
+
+            services.AddDbContext<UsersState>(options =>
+                options.UseSqlServer(AppSettings.SQLServerConnection));
 
             services.AddSwaggerGen(c =>
             {
