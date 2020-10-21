@@ -32,6 +32,7 @@ namespace image_bot.Models
         /// </summary>
         public BotCommand CurentCommand { get; set; }
 
+        public List<ImageResizeRequest> ImageResizeRequests { get; set; }
         public List<ApplyFilterRequest> ApplyFilterRequests { get; set; }
 
     }

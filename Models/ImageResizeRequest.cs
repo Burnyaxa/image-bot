@@ -12,6 +12,13 @@ namespace image_bot.Models
     }
     public class ImageResizeRequest
     {
-
+        public int Id { get; set; }
+        public int UserId { get; set; }
+        public User User { get; set; }
+        /// <summary>
+        /// has default value inicial in UsersState
+        /// </summary>
+        public ImageResizeStatus Status { get; set; }
+        public string Url { get; set; }
     }
 }
