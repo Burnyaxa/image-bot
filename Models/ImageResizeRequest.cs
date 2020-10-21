@@ -14,7 +14,7 @@ namespace image_bot.Models
     {
         public int Id { get; set; }
         public int UserId { get; set; }
-        public User User { get; set; }
+        public BotUser User { get; set; }
         /// <summary>
         /// has default value inicial in UsersState
         /// </summary>

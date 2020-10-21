@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using image_bot.Models;
 namespace image_bot.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/user")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -16,25 +16,25 @@ namespace image_bot.Controllers
         {
             db = context;
         }
-
+        [Route("create")]
         [HttpPost]
-        public async Task<IActionResult> Create(User user)
+        public async Task<IActionResult> Create(BotUser user)
         {
-            if(db.Users.Any(c => c.ChatId == user.ChatId))
+            if(db.BotUsers.Any(c => c.ChatId == user.ChatId))
             {
                 return BadRequest();
             }
-            db.Users.Add(user);
+            db.BotUsers.Add(user);
             await db.SaveChangesAsync();
             return Ok();
         }
-
+        [Route("update")]
         [HttpPost]
-        public async Task<IActionResult> Update(User user)
+        public async Task<IActionResult> Update(BotUser user)
         {
-            if (db.Users.Any(c => c.ChatId == user.ChatId))
+            if (db.BotUsers.Any(c => c.ChatId == user.ChatId))
             {
-                db.Users.Update(user);
+                db.BotUsers.Update(user);
                 await db.SaveChangesAsync();
                 return Ok();
             }

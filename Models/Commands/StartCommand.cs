@@ -24,7 +24,7 @@ namespace image_bot.Models.Commands
         public override async Task Execute(Message message, TelegramBotClient botClient)
         {
             var chatId = message.Chat.Id;
-            User user = new User() { ChatId = chatId };
+            BotUser user = new BotUser() { ChatId = chatId };
             string baseUrl = string.Format(AppSettings.Url, "api/user/create");
             HttpClient client = new HttpClient();
             HttpResponseMessage res = await client.PostAsync(baseUrl, new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json"));

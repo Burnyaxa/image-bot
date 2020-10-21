@@ -19,7 +19,7 @@ namespace image_bot.Models
     /// Info of current bot user
     /// Used to keep track of his state
     /// </summary>
-    public class User
+    public class BotUser
     {
         public int Id { get; set; }
         
