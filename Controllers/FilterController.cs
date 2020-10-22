@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using image_bot.Models;
 using Microsoft.AspNetCore.Mvc;
 using Telegram.Bot.Types;
+using CloudinaryDotNet.Actions;
+using CloudinaryDotNet;
 
 namespace image_bot.Controllers
 {
@@ -16,6 +18,8 @@ namespace image_bot.Controllers
         {
             db = context;
         }
+
+        Cloudinary cloudinary = new Cloudinary();
 
         [Route("choose")]
         [HttpPost]
@@ -34,9 +38,9 @@ namespace image_bot.Controllers
 
         [Route("filter")]
         [HttpPost]
-        public async Task<IActionResult> ChooseFilter(BotUser user, string messageLink)
+        public async Task<IActionResult> ApplyFilter(BotUser user, string messageLink)
         {
-            
+            cloudinary.Api.
         }
     }
 }
