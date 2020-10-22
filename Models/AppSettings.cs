@@ -19,11 +19,17 @@ namespace image_bot.Models
                 Name = JObject.Parse(json)["name"].ToString();
                 Key = JObject.Parse(json)["key"].ToString();
                 SQLServerConnection = JObject.Parse(json)["sqlserverConnection"].ToString();
+                CloudName = JObject.Parse(json)["cloudinary_name"].ToString();
+                CloudKey = JObject.Parse(json)["cloudinary_api_key"].ToString();
+                CloudSecret = JObject.Parse(json)["cloudinary_api_secret"].ToString();
             }
         }
         public static string Url { get; }
         public static string Name { get; }
         public static string Key { get; }
         public static string SQLServerConnection { get; }
+        public static string CloudName { get; }
+        public static string CloudKey { get; }
+        public static string CloudSecret { get; }
     }
 }
