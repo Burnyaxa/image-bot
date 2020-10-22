@@ -20,5 +20,6 @@ namespace image_bot.Models
         /// </summary>
         public ApplyFilterStus Status { get; set; }
         public AvailableFilters? ChosenFilter { get; set; }
+        public string FilteredImageURL { get; set; }
     }
 }

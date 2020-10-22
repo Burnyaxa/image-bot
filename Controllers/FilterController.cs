@@ -13,13 +13,19 @@ namespace image_bot.Controllers
     [Route("api/filter")]
     public class FilterController : Controller
     {
+        public Cloudinary cloudinary;
+
         public UsersState db;
         public FilterController(UsersState context)
         {
             db = context;
-        }
 
-        Cloudinary cloudinary = new Cloudinary();
+            Account account = new Account(
+                AppSettings.CloudName,
+                AppSettings.CloudKey,
+                AppSettings.CloudKey);
+            cloudinary = new Cloudinary(account);
+        }
 
         [Route("choose")]
         [HttpPost]
@@ -28,8 +34,10 @@ namespace image_bot.Controllers
             AvailableFilters chosenFilter;
             if (Enum.TryParse(requestedFilter, out chosenFilter))
             {
-                user.ApplyFilterRequests[0].ChosenFilter = chosenFilter;
-                db.Update(user);
+                ApplyFilterRequest filterRequest = user.ApplyFilterRequests.FirstOrDefault();
+                filterRequest.ChosenFilter = chosenFilter;
+                filterRequest.Status = ApplyFilterStus.AwaitingImage;
+                db.Update(filterRequest);
                 await db.SaveChangesAsync();
                 return Ok();
             }
@@ -38,9 +46,26 @@ namespace image_bot.Controllers
 
         [Route("filter")]
         [HttpPost]
-        public async Task<IActionResult> ApplyFilter(BotUser user, string messageLink)
+        public async Task<IActionResult> ApplyFilter(BotUser user, string imageLink)
         {
-            cloudinary.Api.
+            // upload image to cloud
+            ImageUploadParams uploadParams = new ImageUploadParams()
+            {
+                File = new FileDescription(imageLink),
+                EagerTransforms = new List<Transformation>()
+                {
+                    new Transformation().Effect(user.ApplyFilterRequests.FirstOrDefault().ChosenFilter.ToString())
+                }
+            };
+            // image uploaded
+            // uploadResult has url
+            var uploadResult = cloudinary.Upload(uploadParams);
+            ApplyFilterRequest filterRequest = user.ApplyFilterRequests.FirstOrDefault();
+            filterRequest.FilteredImageURL = uploadResult.Url.ToString();
+            
+            db.Update(filterRequest);
+            await db.SaveChangesAsync();
+            return Ok();
         }
     }
 }
