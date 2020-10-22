@@ -53,5 +53,18 @@ namespace image_bot.Controllers
             var uploadResult = await cloudinary.UploadAsync(uploadParams);
             return new OkObjectResult(uploadResult.Url);
         }
+
+        [Route("delete-request")]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteRequest(ImageResizeRequest request)
+        {
+            if(!db.ImageResizeRequests.Any(r => r.Id == request.Id))
+            {
+                return BadRequest();
+            }
+            db.ImageResizeRequests.Remove(request);
+            await db.SaveChangesAsync();
+            return Ok();
+        }
     }
 }
