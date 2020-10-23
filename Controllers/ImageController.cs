@@ -49,6 +49,7 @@ namespace image_bot.Controllers
             ImageResizeRequest request = db.ImageResizeRequests.Include(u => u.User).Where(u => u.UserId == user.Id).First();
             request.Height = height;
             request.Width = width;
+            request.Status = ImageResizeStatus.AwaitingImage;
             db.ImageResizeRequests.Update(request);
             await db.SaveChangesAsync();
             return Ok();

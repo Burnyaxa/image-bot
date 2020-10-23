@@ -45,8 +45,18 @@ namespace image_bot.Models.Commands
             ImageResizeStatus status = JsonConvert.DeserializeObject<ImageResizeStatus>(result);
             switch (status)
             {
-                case ImageResizeStatus.None:
-                    await botClient.SendTextMessageAsync(chatId, "Please input parameters of the future image in format heightxwidth.", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                case ImageResizeStatus.AwaitingSize:
+                    string height = message.Text.Split('X')[0];
+                    string width = message.Text.Split('X')[1];
+                    url = string.Format(AppSettings.Url, "api/image/set-parameters");
+                    Dictionary<string, string> data = new Dictionary<string, string>()
+                    {
+                        { "chatId", chatId.ToString() },
+                        { "height", height },
+                        { "width", width }
+                    };
+                    await client.PostAsync(url, new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json"));
+                    await botClient.SendTextMessageAsync(chatId, "Good. Now send me your image.", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
                     break;
             }
         }
