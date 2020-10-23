@@ -22,23 +22,25 @@ namespace image_bot.Controllers
 
         [Route("create")]
         [HttpPost]
-        public async Task<IActionResult> Create(BotUser user)
+        public async Task<IActionResult> Create(long chatId)
         {
-            if(db.BotUsers.Any(c => c.ChatId == user.ChatId))
+            if(db.BotUsers.Any(c => c.ChatId == chatId))
             {
                 return BadRequest();
             }
-            db.BotUsers.Add(user);
+            db.BotUsers.Add(new BotUser() { ChatId = chatId});
             await db.SaveChangesAsync();
             return Ok();
         }
 
         [Route("update")]
         [HttpPost]
-        public async Task<IActionResult> Update(BotUser user)
+        public async Task<IActionResult> Update(long chatId, BotCommand command)
         {
-            if (db.BotUsers.Any(c => c.ChatId == user.ChatId))
+            if (db.BotUsers.Any(c => c.ChatId == chatId))
             {
+                BotUser user = db.BotUsers.Where(b => b.ChatId == chatId).First();
+                user.CurentCommand = command;
                 db.BotUsers.Update(user);
                 await db.SaveChangesAsync();
                 return Ok();
@@ -48,10 +50,11 @@ namespace image_bot.Controllers
 
         [Route("get-status")]
         [HttpGet]
-        public IActionResult GetStatus(BotUser user)
+        public IActionResult GetStatus(long chatId)
         {
-            if (db.BotUsers.Any(c => c.ChatId == user.ChatId))
+            if (db.BotUsers.Any(c => c.ChatId == chatId))
             {
+                BotUser user = db.BotUsers.Where(b => b.ChatId == chatId).First();
                 switch (user.CurentCommand)
                 {
                     case BotCommand.Resize:

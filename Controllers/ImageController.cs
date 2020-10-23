@@ -24,6 +24,19 @@ namespace image_bot.Controllers
             cloudinary = new Cloudinary(account);
         }
 
+        [Route("create-request")]
+        [HttpPost]
+        public async Task<ActionResult> CreateRequest(long chatId)
+        {
+            BotUser botUser = db.BotUsers.Where(b => b.ChatId == chatId).First();
+            botUser.CurentCommand = BotCommand.Resize;
+            db.BotUsers.Update(botUser);
+            ImageResizeRequest request = new ImageResizeRequest() { UserId = botUser.Id };
+            db.ImageResizeRequests.Add(request);
+            await db.SaveChangesAsync();
+            return Ok();
+        }
+
         [Route("set-parameters")]
         [HttpPost]
         public async Task<IActionResult> SetParameters(BotUser user, int height, int width)
