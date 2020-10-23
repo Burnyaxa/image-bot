@@ -7,7 +7,6 @@ namespace image_bot.Models
 {
     public enum ImageResizeStatus
     {
-        None,
         AwaitingImage,
         AwaitingSize
     }
