@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.WebUtilities;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +33,19 @@ namespace image_bot.Models.Commands
             };
 
             var response = await client.GetAsync(QueryHelpers.AddQueryString(url, query));
-            response.Content.Headers
+            if (!response.IsSuccessStatusCode)
+            {
+                await botClient.SendTextMessageAsync(chatId, "Please input parameters of the future image in format heightxwidth.", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                return;
+            }
+            string result = await response.Content.ReadAsStringAsync();
+            ImageResizeStatus status = JsonConvert.DeserializeObject<ImageResizeStatus>(result);
+            switch (status)
+            {
+                case ImageResizeStatus.None:
+                    await botClient.SendTextMessageAsync(chatId, "Please input parameters of the future image in format heightxwidth.", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                    break;
+            }
         }
     }
 }

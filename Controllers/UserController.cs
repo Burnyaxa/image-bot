@@ -65,10 +65,10 @@ namespace image_bot.Controllers
                         return new OkObjectResult(applyFilterStatus.First().Status);
                         //TODO: Add micro-stickers case
                     default:
-                        return new BadRequestObjectResult(null);
+                        return BadRequest();
                 }
             }
-            return new BadRequestObjectResult(null);
+            return BadRequest();
         }
 
     }

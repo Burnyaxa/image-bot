@@ -50,7 +50,7 @@ namespace image_bot.Controllers
                     break;
                 }
             }
-            Models.BotCommand botCommand = db.BotUsers.Where(u => u.ChatId == update.Message.Chat.Id).First().CurentCommand;
+            //Models.BotCommand botCommand = db.BotUsers.Where(u => u.ChatId == update.Message.Chat.Id).First().CurentCommand;
 
             return Ok();
         }
