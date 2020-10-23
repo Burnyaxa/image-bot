@@ -65,7 +65,7 @@ namespace image_bot.Controllers
             
             db.Update(filterRequest);
             await db.SaveChangesAsync();
-            return Ok();
+            return new OkObjectResult(filterRequest.FilteredImageURL);
         }
     }
 }

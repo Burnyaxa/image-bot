@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using image_bot.Models;
 using Newtonsoft.Json;
+using Microsoft.EntityFrameworkCore;
 
 namespace image_bot.Controllers
 {
@@ -58,10 +59,25 @@ namespace image_bot.Controllers
         }
 
         [Route("get-status")]
-        [HttpPost]
+        [HttpGet]
         public IActionResult GetStatus(BotUser user)
         {
-            //TODO
+            if (db.BotUsers.Any(c => c.ChatId == user.ChatId))
+            {
+                switch (user.CurentCommand)
+                {
+                    case BotCommand.Resize:
+                        var resizeImageStatus = db.ImageResizeRequests.Include(u => u.User).Where(u => u.UserId == user.Id);
+                        return new OkObjectResult(resizeImageStatus.First().Status);
+                    case BotCommand.ApplyFilter:
+                        var applyFilterStatus = db.ApplyFilterRequests.Include(u => u.User).Where(u => u.UserId == user.Id);
+                        return new OkObjectResult(applyFilterStatus.First().Status);
+                    //TODO: Add micro-stickers case
+                    default:
+                        return new BadRequestObjectResult(null);
+                }
+            }
+            return new BadRequestObjectResult(null);
         }
 
     }
