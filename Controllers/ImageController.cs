@@ -32,6 +32,10 @@ namespace image_bot.Controllers
             botUser.CurentCommand = BotCommand.Resize;
             db.BotUsers.Update(botUser);
             ImageResizeRequest request = new ImageResizeRequest() { UserId = botUser.Id };
+            if (db.ImageResizeRequests.Any(i => i.UserId == botUser.Id))
+            {
+                return BadRequest();
+            }
             db.ImageResizeRequests.Add(request);
             await db.SaveChangesAsync();
             return Ok();

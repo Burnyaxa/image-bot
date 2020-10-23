@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -35,6 +36,8 @@ namespace image_bot.Models.Commands
             var response = await client.GetAsync(QueryHelpers.AddQueryString(url, query));
             if (!response.IsSuccessStatusCode)
             {
+                url = string.Format(AppSettings.Url, "api/image/create-request");
+                await client.PostAsync(url, new StringContent(JsonConvert.SerializeObject(chatId), Encoding.UTF8, "application/json"));
                 await botClient.SendTextMessageAsync(chatId, "Please input parameters of the future image in format heightxwidth.", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
                 return;
             }
