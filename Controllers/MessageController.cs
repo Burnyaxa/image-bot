@@ -42,7 +42,6 @@ namespace image_bot.Controllers
             var commands = Bot.Commands;
             var message = update.Message;
             var botClient = await Bot.GetBotClientAsync();
-
             foreach (var command in commands)
             {
                 if (command.Contains(message))
@@ -51,6 +50,8 @@ namespace image_bot.Controllers
                     break;
                 }
             }
+            Models.BotCommand botCommand = db.BotUsers.Where(u => u.ChatId == update.Message.Chat.Id).First().CurentCommand;
+
             return Ok();
         }
     }

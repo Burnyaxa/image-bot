@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.WebUtilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -22,6 +24,15 @@ namespace image_bot.Models.Commands
         public override async Task Execute(Message message, TelegramBotClient botClient)
         {
             var chatId = message.Chat.Id;
+            HttpClient client = new HttpClient();
+            string url = string.Format(AppSettings.Url, "api/user/get-status");
+            var query = new Dictionary<string, string>
+            {
+                ["chatId"] = chatId.ToString()
+            };
+
+            var response = await client.GetAsync(QueryHelpers.AddQueryString(url, query));
+            response.Content.Headers
         }
     }
 }
