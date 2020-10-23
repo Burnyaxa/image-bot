@@ -39,8 +39,9 @@ namespace image_bot.Controllers
 
         [Route("set-parameters")]
         [HttpPost]
-        public async Task<IActionResult> SetParameters(BotUser user, int height, int width)
+        public async Task<IActionResult> SetParameters(long chatId, int height, int width)
         {
+            BotUser user = db.BotUsers.Where(b => b.ChatId == chatId).First();
             ImageResizeRequest request = db.ImageResizeRequests.Include(u => u.User).Where(u => u.UserId == user.Id).First();
             request.Height = height;
             request.Width = width;
