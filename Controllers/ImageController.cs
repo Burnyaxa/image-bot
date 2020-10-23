@@ -20,7 +20,7 @@ namespace image_bot.Controllers
         public ImageController(UsersState context)
         {
             db = context;
-            account = new Account(AppSettings.CloudName, AppSettings.Cloudkey, AppSettings.CloudSecret);
+            account = new Account(AppSettings.CloudName, AppSettings.CloudKey, AppSettings.CloudSecret);
             cloudinary = new Cloudinary(account);
         }
 
