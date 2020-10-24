@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using System.Net.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace image_bot.Models.Commands
 {
@@ -19,9 +21,16 @@ namespace image_bot.Models.Commands
             return message.Text.Contains(this.Name);
         }
 
-        public override Task Execute(Message message, TelegramBotClient client)
+        public override async Task Execute(Message message, TelegramBotClient botClient)
         {
-            
+            var chatId = message.Chat.Id;
+            string baseUrl = string.Format(AppSettings.Url, "api/user/create");
+            HttpClient client = new HttpClient();
+            HttpResponseMessage res = await client.PostAsync(baseUrl, new StringContent(JsonConvert.SerializeObject(chatId), Encoding.UTF8, "application/json"));
+            HttpContent content = res.Content;
+
+            IActionResult result = ResponseMessage
+            content.    
         }
     }
 }
