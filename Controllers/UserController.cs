@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using image_bot.Models;
 using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace image_bot.Controllers
 {
@@ -15,15 +16,18 @@ namespace image_bot.Controllers
     public class UserController : ControllerBase
     {
         public UsersState db;
-        public UserController(UsersState context)
+        private readonly ILogger _logger;
+        public UserController(UsersState context, ILogger<UserController> logger)
         {
             db = context;
+            _logger = logger;
         }
 
         [Route("create")]
         [HttpPost]
         public async Task<IActionResult> Create(long chatId)
         {
+            _logger.LogInformation(chatId.ToString());
             if(db.BotUsers.Any(c => c.ChatId == chatId))
             {
                 return BadRequest();

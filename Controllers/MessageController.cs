@@ -38,7 +38,7 @@ namespace image_bot.Controllers
 
             //_logger.LogInformation(db.Users.);
             if (update == null) return Ok();
-
+            _logger.LogInformation(update.Message.Text);
             var commands = Bot.Commands;
             var message = update.Message;
             var botClient = await Bot.GetBotClientAsync();
@@ -47,11 +47,16 @@ namespace image_bot.Controllers
                 if (command.Contains(message))
                 {
                     await command.Execute(message, botClient);
-                    break;
+                    return Ok();
                 }
             }
-            //Models.BotCommand botCommand = db.BotUsers.Where(u => u.ChatId == update.Message.Chat.Id).First().CurentCommand;
-
+            Models.BotCommand botCommand = db.BotUsers.Where(u => u.ChatId == update.Message.Chat.Id).First().CurentCommand;
+            switch (botCommand)
+            {
+                case Models.BotCommand.Resize:
+                    await commands.Where(c => c.Name == "/resize").First().Execute(message, botClient);
+                    return Ok();
+            }
             return Ok();
         }
     }

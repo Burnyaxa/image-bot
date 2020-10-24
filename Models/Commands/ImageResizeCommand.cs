@@ -37,7 +37,7 @@ namespace image_bot.Models.Commands
             if (!response.IsSuccessStatusCode)
             {
                 url = string.Format(AppSettings.Url, "api/image/create-request");
-                await client.PostAsync(url, new StringContent(JsonConvert.SerializeObject(chatId), Encoding.UTF8, "application/json"));
+                await client.PostAsync(QueryHelpers.AddQueryString(url, query), null);
                 await botClient.SendTextMessageAsync(chatId, "Please input parameters of the future image in format heightxwidth.", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
                 return;
             }
@@ -46,16 +46,16 @@ namespace image_bot.Models.Commands
             switch (status)
             {
                 case ImageResizeStatus.AwaitingSize:
-                    string height = message.Text.Split('X')[0];
-                    string width = message.Text.Split('X')[1];
+                    string height = message.Text.Split(':')[0];
+                    string width = message.Text.Split(':')[1];
                     url = string.Format(AppSettings.Url, "api/image/set-parameters");
-                    Dictionary<string, string> data = new Dictionary<string, string>()
+                    var data = new Dictionary<string, string>()
                     {
-                        { "chatId", chatId.ToString() },
-                        { "height", height },
-                        { "width", width }
+                        ["chatId"] = chatId.ToString(),
+                        ["height"] = height,
+                        ["width"] = width 
                     };
-                    await client.PostAsync(url, new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json"));
+                    await client.PostAsync(QueryHelpers.AddQueryString(url, data), null);
                     await botClient.SendTextMessageAsync(chatId, "Good. Now send me your image.", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
                     break;
             }
