@@ -19,11 +19,11 @@ namespace image_bot.Models
     /// Info of current bot user
     /// Used to keep track of his state
     /// </summary>
-    public class User
+    public class BotUser
     {
         public int Id { get; set; }
         
-        public int ChatId { get; set; }
+        public long ChatId { get; set; }
 
         /// <summary>
         /// Command that is currently used
@@ -32,6 +32,7 @@ namespace image_bot.Models
         /// </summary>
         public BotCommand CurentCommand { get; set; }
 
+        public List<ImageResizeRequest> ImageResizeRequests { get; set; }
         public List<ApplyFilterRequest> ApplyFilterRequests { get; set; }
 
     }

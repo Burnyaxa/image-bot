@@ -16,10 +16,11 @@ namespace image_bot.Controllers
     public class MessageController : ControllerBase
     {
         private readonly ILogger _logger;
-
-        public MessageController(ILogger<MessageController> logger)
+        public UsersState db;
+        public MessageController(ILogger<MessageController> logger, UsersState context)
         {
             _logger = logger;
+            db = context;
         }
         // GET api/values
         [HttpGet]
@@ -34,20 +35,26 @@ namespace image_bot.Controllers
         [HttpPost]
         public async Task<OkResult> Update([FromBody]Update update)
         {
-            _logger.LogInformation("ok.");
+            //_logger.LogInformation(db.Users.);
             if (update == null) return Ok();
-
+            _logger.LogInformation(update.Message.Text);
             var commands = Bot.Commands;
             var message = update.Message;
             var botClient = await Bot.GetBotClientAsync();
-
             foreach (var command in commands)
             {
                 if (command.Contains(message))
                 {
                     await command.Execute(message, botClient);
-                    break;
+                    return Ok();
                 }
+            }
+            Models.BotCommand botCommand = db.BotUsers.Where(u => u.ChatId == update.Message.Chat.Id).First().CurentCommand;
+            switch (botCommand)
+            {
+                case Models.BotCommand.Resize:
+                    await commands.Where(c => c.Name == "/resize").First().Execute(message, botClient);
+                    return Ok();
             }
             return Ok();
         }

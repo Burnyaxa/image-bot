@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 
 namespace image_bot.Models
 {
-    public enum ApplyFilterStus
+    public enum ImageResizeStatus
     {
         AwaitingImage,
-        AwaitingFilterSelect
+        AwaitingSize
     }
-    public class ApplyFilterRequest
+    public class ImageResizeRequest
     {
         public int Id { get; set; }
         public int UserId { get; set; }
@@ -18,6 +18,8 @@ namespace image_bot.Models
         /// <summary>
         /// has default value inicial in UsersState
         /// </summary>
-        public ApplyFilterStus Status { get; set; }
+        public ImageResizeStatus Status { get; set; }
+        public int? Height { get; set; }
+        public int? Width { get; set; }
     }
 }
