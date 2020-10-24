@@ -22,8 +22,8 @@ namespace image_bot.Controllers
 
             Account account = new Account(
                 AppSettings.CloudName,
-                AppSettings.Cloudkey,
-                AppSettings.Cloudkey);
+                AppSettings.CloudKey,
+                AppSettings.CloudKey);
             cloudinary = new Cloudinary(account);
         }
 
