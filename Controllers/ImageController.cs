@@ -57,17 +57,14 @@ namespace image_bot.Controllers
 
         [Route("resize")]
         [HttpGet]
-        public async Task<IActionResult> Resize(BotUser user, string url)
+        public async Task<IActionResult> Resize(long chatId, string url)
         {
+            BotUser user = db.BotUsers.Where(b => b.ChatId == chatId).First();
             ImageResizeRequest request = db.ImageResizeRequests.Include(u => u.User).Where(u => u.UserId == user.Id).First();
             ImageUploadParams uploadParams = new ImageUploadParams()
             {
                 File = new FileDescription(url),
-                EagerTransforms = new List<Transformation>()
-                {
-                    new Transformation().Width(request.Width).Height(request.Height)
-                }
-
+                Transformation = new Transformation().Width(request.Width).Height(request.Height).Crop("scale")
             };
             var uploadResult = await cloudinary.UploadAsync(uploadParams);
             return new OkObjectResult(uploadResult.Url);
@@ -75,13 +72,17 @@ namespace image_bot.Controllers
 
         [Route("delete-request")]
         [HttpDelete]
-        public async Task<IActionResult> DeleteRequest(ImageResizeRequest request)
+        public async Task<IActionResult> DeleteRequest(long chatId)
         {
+            BotUser user = db.BotUsers.Where(b => b.ChatId == chatId).First();
+            ImageResizeRequest request = db.ImageResizeRequests.Where(i => i.UserId == user.Id).First();
             if(!db.ImageResizeRequests.Any(r => r.Id == request.Id))
             {
                 return BadRequest();
             }
             db.ImageResizeRequests.Remove(request);
+            user.CurentCommand = BotCommand.Start;
+            db.BotUsers.Update(user);
             await db.SaveChangesAsync();
             return Ok();
         }

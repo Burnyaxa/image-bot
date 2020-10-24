@@ -58,6 +58,27 @@ namespace image_bot.Models.Commands
                     await client.PostAsync(QueryHelpers.AddQueryString(url, data), null);
                     await botClient.SendTextMessageAsync(chatId, "Good. Now send me your image.", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
                     break;
+                case ImageResizeStatus.AwaitingImage:
+                    var file = await botClient.GetFileAsync(message.Photo.LastOrDefault()?.FileId);
+                    string baseUrl = string.Format("https://api.telegram.org/file/bot{0}/{1}", AppSettings.Key, file.FilePath);
+                    url = string.Format(AppSettings.Url, "api/image/resize");
+                    query = new Dictionary<string, string>
+                    {
+                        ["chatId"] = chatId.ToString(),
+                        ["url"] = baseUrl
+                    };
+                    response = await client.GetAsync(QueryHelpers.AddQueryString(url, query));
+                    result = await response.Content.ReadAsStringAsync();
+                    string imageUrl = JsonConvert.DeserializeObject<string>(result);
+                    await botClient.SendPhotoAsync(chatId, imageUrl);
+                    url = string.Format(AppSettings.Url, "api/image/delete-request");
+                    query = new Dictionary<string, string>
+                    {
+                        ["chatId"] = chatId.ToString(),
+                    };
+                    await client.DeleteAsync(QueryHelpers.AddQueryString(url, query));
+                    break;
+                       
             }
         }
     }
