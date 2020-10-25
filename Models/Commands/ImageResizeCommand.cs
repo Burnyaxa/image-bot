@@ -77,8 +77,7 @@ namespace image_bot.Models.Commands
                         ["chatId"] = chatId.ToString(),
                     };
                     await client.DeleteAsync(QueryHelpers.AddQueryString(url, query));
-                    break;
-                       
+                    break;                       
             }
         }
     }

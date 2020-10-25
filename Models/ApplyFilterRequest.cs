@@ -7,8 +7,8 @@ namespace image_bot.Models
 {
     public enum ApplyFilterStus
     {
-        AwaitingImage,
-        AwaitingFilterSelect
+        AwaitingFilterSelect,
+        AwaitingImage        
     }
     public class ApplyFilterRequest
     {
@@ -20,6 +20,5 @@ namespace image_bot.Models
         /// </summary>
         public ApplyFilterStus Status { get; set; }
         public AvailableFilters? ChosenFilter { get; set; }
-        public string FilteredImageURL { get; set; }
     }
 }
