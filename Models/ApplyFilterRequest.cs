@@ -19,6 +19,6 @@ namespace image_bot.Models
         /// has default value inicial in UsersState
         /// </summary>
         public ApplyFilterStus Status { get; set; }
-        public AvailableFilters? ChosenFilter { get; set; }
+        public AvailableFilters ChosenFilter { get; set; }
     }
 }

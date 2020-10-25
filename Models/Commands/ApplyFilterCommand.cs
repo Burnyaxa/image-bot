@@ -13,7 +13,7 @@ namespace image_bot.Models.Commands
 {
     public class ApplyFilterCommand : Command
     {
-        public override string Name => throw new NotImplementedException();
+        public override string Name => @"/filter";
 
         public override bool Contains(Message message)
         {
@@ -66,7 +66,7 @@ namespace image_bot.Models.Commands
                         ["chatId"] = chatId.ToString(),
                         ["url"] = baseUrl
                     };
-                    response = await client.GetAsync(QueryHelpers.AddQueryString(url, query));
+                    response = await client.PostAsync(QueryHelpers.AddQueryString(url, query), null);
                     result = await response.Content.ReadAsStringAsync();
                     string imageUrl = JsonConvert.DeserializeObject<string>(result);
                     await botClient.SendPhotoAsync(chatId, imageUrl);

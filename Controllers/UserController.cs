@@ -75,6 +75,7 @@ namespace image_bot.Controllers
             return BadRequest();
         }
 
+        /*
         [Route("get-status")]
         [HttpGet]
         public IActionResult GetStatus(BotUser user)
@@ -96,5 +97,6 @@ namespace image_bot.Controllers
             }
             return new BadRequestObjectResult(null);
         }
+        */
     }
 }

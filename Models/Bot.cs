@@ -25,6 +25,7 @@ namespace image_bot.Models
             commandsList = new List<Command>();
             commandsList.Add(new StartCommand());
             commandsList.Add(new ImageResizeCommand());
+            commandsList.Add(new ApplyFilterCommand());
             //TODO: Add more commands
 
             botClient = new TelegramBotClient(AppSettings.Key);
