@@ -45,9 +45,9 @@ namespace image_bot.Controllers
             return Ok();
         }
 
-        [Route("set-name")]
+        [Route("name")]
         [HttpPost]
-        public async Task<IActionResult> SetName(long chatId, string name)
+        public async Task<IActionResult> Name(long chatId, string name)
         {
             BotUser user = db.BotUsers.Where(b => b.ChatId == chatId).First();
             CreateMicroStickersRequest request = db.CreateMicroStickersRequests.Include(u => u.User).Where(u => u.UserId == user.Id).First();
@@ -56,6 +56,15 @@ namespace image_bot.Controllers
             db.CreateMicroStickersRequests.Update(request);
             await db.SaveChangesAsync();
             return Ok();
+        }
+
+        [Route("name")]
+        [HttpGet]
+        public IActionResult Name(long chatId)
+        {
+            BotUser user = db.BotUsers.Where(b => b.ChatId == chatId).First();
+            CreateMicroStickersRequest request = db.CreateMicroStickersRequests.Include(u => u.User).Where(u => u.UserId == user.Id).First();
+            return new OkObjectResult(request.Name);
         }
 
         [Route("create-sticker")]

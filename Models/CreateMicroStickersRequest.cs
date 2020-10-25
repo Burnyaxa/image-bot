@@ -19,6 +19,6 @@ namespace image_bot.Models
         /// has default value inicial in UsersState
         /// </summary>
         public MicroStickersStatus Status { get; set; }
-        public string? Name { get; set; }
+        public string Name { get; set; }
         }
 }
