@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using image_bot.Models;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using Microsoft.EntityFrameworkCore;
 
 namespace image_bot.Controllers
 {
@@ -42,6 +43,18 @@ namespace image_bot.Controllers
             return Ok();
         }
 
+        [Route("set-name")]
+        [HttpPost]
+        public async Task<IActionResult> SetName(long chatId, string name)
+        {
+            BotUser user = db.BotUsers.Where(b => b.ChatId == chatId).First();
+            CreateMicroStickersRequest request = db.CreateMicroStickersRequests.Include(u => u.User).Where(u => u.UserId == user.Id).First();
+            request.Name = name;
+            request.Status = MicroStickersStatus.AwaitingSticker;
+            db.CreateMicroStickersRequests.Update(request);
+            await db.SaveChangesAsync();
+            return Ok();
+        }
 
 
     }
