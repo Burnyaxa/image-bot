@@ -8,7 +8,7 @@ using image_bot.Models;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.EntityFrameworkCore;
-using Telegram.Bot.Types;
+
 namespace image_bot.Controllers
 {
     [Route("api/micro-sticker")]
@@ -33,7 +33,7 @@ namespace image_bot.Controllers
         public async Task<ActionResult> CreateRequest(long chatId)
         {
             BotUser botUser = db.BotUsers.Where(b => b.ChatId == chatId).First();
-            botUser.CurentCommand = Models.BotCommand.CreateMicroStickers;
+            botUser.CurentCommand = BotCommand.CreateMicroStickers;
             db.BotUsers.Update(botUser);
             CreateMicroStickersRequest request = new CreateMicroStickersRequest() { UserId = botUser.Id };
             if (db.ImageResizeRequests.Any(i => i.UserId == botUser.Id))
@@ -71,6 +71,21 @@ namespace image_bot.Controllers
             return new OkObjectResult(uploadResult.Url);
         }
 
-
+        [Route("delete-request")]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteRequest(long chatId)
+        {
+            BotUser user = db.BotUsers.Where(b => b.ChatId == chatId).First();
+            CreateMicroStickersRequest request = db.CreateMicroStickersRequests.Where(i => i.UserId == user.Id).First();
+            if (!db.CreateMicroStickersRequests.Any(r => r.Id == request.Id))
+            {
+                return BadRequest();
+            }
+            db.CreateMicroStickersRequests.Remove(request);
+            user.CurentCommand = BotCommand.Start;
+            db.BotUsers.Update(user);
+            await db.SaveChangesAsync();
+            return Ok();
+        }
     }
 }
