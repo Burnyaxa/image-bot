@@ -55,6 +55,9 @@ namespace image_bot.Controllers
                 case Models.BotCommand.Resize:
                     await commands.Where(c => c.Name == "/resize").First().Execute(message, botClient);
                     return Ok();
+                case Models.BotCommand.CreateMicroStickers:
+                    await commands.Where(c => c.Name == "/micro-stickers").First().Execute(message, botClient);
+                    return Ok();
             }
             return Ok();
         }

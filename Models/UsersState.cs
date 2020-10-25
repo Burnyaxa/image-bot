@@ -11,6 +11,7 @@ namespace image_bot.Models
         public DbSet<BotUser> BotUsers { get; set; }
         public DbSet<ApplyFilterRequest> ApplyFilterRequests { get; set; }
         public DbSet<ImageResizeRequest> ImageResizeRequests { get; set; }
+        public DbSet<CreateMicroStickersRequest> CreateMicroStickersRequests { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<BotUser>().Property(u => u.CurentCommand).HasDefaultValue(BotCommand.Start);
@@ -18,6 +19,8 @@ namespace image_bot.Models
             modelBuilder.Entity<ImageResizeRequest>().Property(i => i.Width).HasDefaultValue(null);
             modelBuilder.Entity<ImageResizeRequest>().Property(i => i.Height).HasDefaultValue(null);
             modelBuilder.Entity<ImageResizeRequest>().Property(i => i.Status).HasDefaultValue(ImageResizeStatus.AwaitingSize);
+            modelBuilder.Entity<CreateMicroStickersRequest>().Property(c => c.Status).HasDefaultValue(MicroStickersStatus.AwaitingName);
+            modelBuilder.Entity<CreateMicroStickersRequest>().Property(c => c.Name).HasDefaultValue(null);
         }
 
         public UsersState(DbContextOptions<UsersState> options) : base(options)
