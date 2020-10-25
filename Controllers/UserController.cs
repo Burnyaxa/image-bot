@@ -67,7 +67,9 @@ namespace image_bot.Controllers
                     case BotCommand.ApplyFilter:
                         var applyFilterStatus = db.ApplyFilterRequests.Include(u => u.User).Where(u => u.UserId == user.Id);
                         return new OkObjectResult(applyFilterStatus.First().Status);
-                        //TODO: Add micro-stickers case
+                    case BotCommand.CreateMicroStickers:
+                        var createMicroStickersStatus = db.CreateMicroStickersRequests.Include(u => u.User).Where(u => u.UserId == user.Id);
+                        return new OkObjectResult(createMicroStickersStatus.First().Status);    
                     default:
                         return BadRequest();
                 }

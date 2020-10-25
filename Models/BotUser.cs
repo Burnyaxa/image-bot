@@ -13,7 +13,7 @@ namespace image_bot.Models
         Start,
         Resize,
         ApplyFilter,
-        CreateMicroSticker
+        CreateMicroStickers
     }
     /// <summary>
     /// Info of current bot user
