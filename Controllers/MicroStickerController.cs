@@ -25,6 +25,23 @@ namespace image_bot.Controllers
             cloudinary = new Cloudinary(account);
         }
 
+        [Route("create-request")]
+        [HttpPost]
+        public async Task<ActionResult> CreateRequest(long chatId)
+        {
+            BotUser botUser = db.BotUsers.Where(b => b.ChatId == chatId).First();
+            botUser.CurentCommand = BotCommand.CreateMicroStickers;
+            db.BotUsers.Update(botUser);
+            CreateMicroStickersRequest request = new CreateMicroStickersRequest() { UserId = botUser.Id };
+            if (db.ImageResizeRequests.Any(i => i.UserId == botUser.Id))
+            {
+                return BadRequest();
+            }
+            db.CreateMicroStickersRequests.Add(request);
+            await db.SaveChangesAsync();
+            return Ok();
+        }
+
 
 
     }
