@@ -74,7 +74,7 @@ namespace image_bot.Controllers
             ImageUploadParams uploadParams = new ImageUploadParams()
             {
                 File = new FileDescription(url),
-                Transformation = new Transformation().Width(_stickerWidth).Height(_stickerHeight).Crop("pad").Gravity("west")
+                Transformation = new Transformation().Width(_stickerWidth).Height(_stickerHeight).Crop("pad").Gravity("west").FetchFormat("png")
             };
             var uploadResult = await cloudinary.UploadAsync(uploadParams);
             return new OkObjectResult(uploadResult.Url);

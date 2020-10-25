@@ -87,8 +87,8 @@ namespace image_bot.Models.Commands
                     response = await client.GetAsync(QueryHelpers.AddQueryString(url, query));
                     result = await response.Content.ReadAsStringAsync();
                     int userId = message.From.Id;
-                    string stickerPackName = JsonConvert.DeserializeObject<string>(result);
-                    string shortStickerPackName = stickerPackName.ToLower().Replace(' ', '_') + "_by_imagebot";
+                    string stickerPackName = result;
+                    string shortStickerPackName = stickerPackName.ToLower().Replace(' ', '_') + "_by_burnyaxa_bot";
                     await botClient.CreateNewStickerSetAsync(userId, shortStickerPackName, stickerPackName, stickerImages.First(), emojis.First());
                     stickerImages.RemoveAt(0);
                     emojis.RemoveAt(0);
