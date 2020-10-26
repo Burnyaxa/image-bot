@@ -12,14 +12,14 @@ using Microsoft.EntityFrameworkCore;
 namespace image_bot.Controllers
 {
     [Route("api/filter")]
+    [ApiController]
+    [Produces("application/json")]
     public class FilterController : Controller
     {
-        public UsersState db;
         public Cloudinary cloudinary;
         public Account account;
-        public FilterController(UsersState context)
+        public FilterController()
         {
-            db = context;
             account = new Account(AppSettings.CloudName, AppSettings.CloudKey, AppSettings.CloudSecret);
             cloudinary = new Cloudinary(account);
         }
@@ -78,22 +78,19 @@ namespace image_bot.Controllers
 
         [Route("apply")]
         [HttpPost]
-        public async Task<IActionResult> ApplyFilter(long chatId, string url)
+        public async Task<IActionResult> ApplyFilter([FromBody] ImageToFilter image)
         {
             // upload image to cloud
-            BotUser user = GetBotUser(chatId);
-            ApplyFilterRequest userFilterRequest = user.ApplyFilterRequests.FirstOrDefault();
-
             ImageUploadParams uploadParams = new ImageUploadParams()
             {
-                File = new FileDescription(url),
+                File = new FileDescription(image.Url),
                 Transformation = new Transformation()
-                    .Effect(userFilterRequest.ChosenFilter.ToString())
+                    .Effect(image.Filter.ToString())
             };
             // image uploaded
             // uploadResult has url
             var uploadResult = await cloudinary.UploadAsync(uploadParams);
-            return new OkObjectResult(uploadResult.Url);
+            return Created(uploadResult.Url, uploadResult);
         }
 
         [Route("delete-request")]
