@@ -28,18 +28,22 @@ namespace image_bot.Controllers
         public async Task<IActionResult> Post(long chatId)
         { 
             BotUser user = new BotUser() { ChatId = chatId };
-            if (db.BotUsers.Any(b => b.ChatId == user.ChatId)) return BadRequest("Cannot create an existing user.");
+            if (db.BotUsers.Any(b => b.ChatId == user.ChatId)) return BadRequest();
             db.BotUsers.Add(user);
             await db.SaveChangesAsync();
             string uri = String.Format(AppSettings.Url, "api/users/") + user.ChatId.ToString();
             return Created(uri, user);
         }
 
-        [Route("/{chatId}")]
+        [Route("{chatId}")]
         [HttpGet]
         public IActionResult GetByChatId(long chatId)
         {
-            BotUser user = db.BotUsers.Where(b => b.ChatId == chatId).FirstOrDefault();
+            BotUser user = db.BotUsers.Where(b => b.ChatId == chatId)
+                .Include(b => b.ImageResizeRequests)
+                .Include(b => b.ApplyFilterRequests)
+                .Include(b => b.CreateMicroStickersRequests)
+                .FirstOrDefault();
             if(user == null)
             {
                 return NotFound();
@@ -47,13 +51,14 @@ namespace image_bot.Controllers
             return new OkObjectResult(user);
         }
 
-        [Route("/{chatId}")]
+        [Route("{chatId}")]
         [HttpPut]
         public async Task<IActionResult> Put(long chatId, [FromBody]BotUser user)
         {
             if(db.BotUsers.Any(b => b.ChatId == chatId))
             {
-                db.Update(user);
+                db.Entry(user).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                db.BotUsers.Update(user);
                 await db.SaveChangesAsync();
                 return Ok();
             }
@@ -63,7 +68,7 @@ namespace image_bot.Controllers
             return Created(uri, user);
         }
 
-        [Route("/{chatId}/requests")]
+        [Route("{chatId}/requests")]
         [HttpGet]
         public IActionResult GetRequests(long chatId)
         {
@@ -88,7 +93,7 @@ namespace image_bot.Controllers
             }
         }
 
-        [Route("/{chatId}")]
+        [Route("{chatId}")]
         [HttpDelete]
         public async Task<IActionResult> Delete(long chatId)
         {

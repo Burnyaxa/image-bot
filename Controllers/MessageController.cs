@@ -35,6 +35,7 @@ namespace image_bot.Controllers
         [HttpPost]
         public async Task<OkResult> Update([FromBody]Update update)
         {
+            
             //return Ok();
             //_logger.LogInformation(db.Users.);
             if (update == null) return Ok();
@@ -58,6 +59,7 @@ namespace image_bot.Controllers
                     return Ok();
                 case Models.BotCommand.ApplyFilter:
                     await commands.Where(c => c.Name == "/filter").First().Execute(message, botClient);
+                    return Ok();
                 case Models.BotCommand.CreateMicroStickers:
                     await commands.Where(c => c.Name == "/micro-stickers").First().Execute(message, botClient);
                     return Ok();

@@ -21,7 +21,7 @@ namespace image_bot.Controllers
         public ImageResizeRequestController(UsersState context)
         {
             db = context;
-            account = new Account(AppSettings.CloudName, AppSettings.Cloudkey, AppSettings.CloudSecret);
+            account = new Account(AppSettings.CloudName, AppSettings.CloudKey, AppSettings.CloudSecret);
             cloudinary = new Cloudinary(account);
         }
 
@@ -60,7 +60,7 @@ namespace image_bot.Controllers
         {
             if (db.ImageResizeRequests.Any(b => b.UserId == userId))
             {
-                db.Update(request);
+                db.Entry(request).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                 await db.SaveChangesAsync();
                 return Ok();
             }
