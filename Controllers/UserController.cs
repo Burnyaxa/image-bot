@@ -30,7 +30,7 @@ namespace image_bot.Controllers
             if (db.BotUsers.Any(b => b.ChatId == user.ChatId)) return BadRequest("Cannot create an existing user.");
             db.BotUsers.Add(user);
             await db.SaveChangesAsync();
-            string uri = String.Format(AppSettings.Url, "api/users/") + user.Id;
+            string uri = String.Format(AppSettings.Url, "api/users/") + user.ChatId.ToString();
             return Created(uri, user);
         }
 
@@ -45,6 +45,24 @@ namespace image_bot.Controllers
             }
             return new OkObjectResult(user);
         }
+
+        [Route("/{chatId}")]
+        [HttpPut]
+        public async Task<IActionResult> Put(long chatId, BotUser user)
+        {
+            if(db.BotUsers.Any(b => b.ChatId == chatId))
+            {
+                db.Update(user);
+                await db.SaveChangesAsync();
+                return Ok();
+            }
+            db.BotUsers.Add(user);
+            await db.SaveChangesAsync();
+            string uri = String.Format(AppSettings.Url, "api/users/") + user.ChatId.ToString();
+            return Created(uri, user);
+        }
+
+
 
         [Route("create")]
         [HttpPost]
