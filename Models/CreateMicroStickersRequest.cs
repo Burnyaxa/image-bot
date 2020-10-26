@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 
 namespace image_bot.Models
 {
-    public enum ApplyFilterStus
+    public enum MicroStickersStatus
     {
-        AwaitingFilterSelect,
-        AwaitingImage        
+        AwaitingName,
+        AwaitingSticker
     }
-    public class ApplyFilterRequest
+    public class CreateMicroStickersRequest
     {
         public int Id { get; set; }
         public int UserId { get; set; }
@@ -18,7 +18,7 @@ namespace image_bot.Models
         /// <summary>
         /// has default value inicial in UsersState
         /// </summary>
-        public ApplyFilterStus Status { get; set; }
-        public AvailableFilters ChosenFilter { get; set; }
-    }
+        public MicroStickersStatus Status { get; set; }
+        public string Name { get; set; }
+        }
 }

@@ -35,6 +35,8 @@ namespace image_bot.Models.Commands
             HttpResponseMessage res = await client.PostAsync(QueryHelpers.AddQueryString(baseUrl, query), null);
             HttpContent content = res.Content;
             
+            
+
             await botClient.SendTextMessageAsync(chatId, "Hello and welcome to image-bot. Type '/' to see available commands.", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
         }
     }

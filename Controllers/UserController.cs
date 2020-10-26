@@ -67,7 +67,9 @@ namespace image_bot.Controllers
                     case BotCommand.ApplyFilter:
                         var applyFilterStatus = db.ApplyFilterRequests.Include(u => u.User).Where(u => u.UserId == user.Id);
                         return new OkObjectResult(applyFilterStatus.First().Status);
-                        //TODO: Add micro-stickers case
+                    case BotCommand.CreateMicroStickers:
+                        var createMicroStickersStatus = db.CreateMicroStickersRequests.Include(u => u.User).Where(u => u.UserId == user.Id);
+                        return new OkObjectResult(createMicroStickersStatus.First().Status);    
                     default:
                         return BadRequest();
                 }
@@ -75,5 +77,28 @@ namespace image_bot.Controllers
             return BadRequest();
         }
 
+        /*
+        [Route("get-status")]
+        [HttpGet]
+        public IActionResult GetStatus(BotUser user)
+        {
+            if (db.BotUsers.Any(c => c.ChatId == user.ChatId))
+            {
+                switch (user.CurentCommand)
+                {
+                    case BotCommand.Resize:
+                        var resizeImageStatus = db.ImageResizeRequests.Include(u => u.User).Where(u => u.UserId == user.Id);
+                        return new OkObjectResult(resizeImageStatus.First().Status);
+                    case BotCommand.ApplyFilter:
+                        var applyFilterStatus = db.ApplyFilterRequests.Include(u => u.User).Where(u => u.UserId == user.Id);
+                        return new OkObjectResult(applyFilterStatus.First().Status);
+                    //TODO: Add micro-stickers case
+                    default:
+                        return new BadRequestObjectResult(null);
+                }
+            }
+            return new BadRequestObjectResult(null);
+        }
+        */
     }
 }
