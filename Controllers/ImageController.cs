@@ -35,7 +35,6 @@ namespace image_bot.Controllers
             };
             var uploadResult = await cloudinary.UploadAsync(uploadParams);
             return Created(uploadResult.Url, uploadResult);
-            return new OkObjectResult(uploadResult.Url);
         }
     }
 }
