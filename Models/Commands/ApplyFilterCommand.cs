@@ -8,6 +8,7 @@ using System.Net.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace image_bot.Models.Commands
 {
@@ -40,7 +41,20 @@ namespace image_bot.Models.Commands
             {
                 url = string.Format(AppSettings.Url, "api/filter/create-request");
                 await client.PostAsync(QueryHelpers.AddQueryString(url, query), null);
-                await botClient.SendTextMessageAsync(chatId, "Please input filter your preferred filter name.", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+
+                //
+                //
+                //
+                var rkm = createKeyboard();
+             
+                //await bot.SendTextMessage(update.Message.Chat.Id, msg, false, false, 0, rkm);
+
+
+                //
+                //
+                //
+                await botClient.SendTextMessageAsync(chatId, "Please input parameters of the future image in format heightxwidth.", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown, false, false, 0, rkm);
+                // await botClient.SendTextMessageAsync(chatId, "Please input filter your preferred filter name.", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
                 return;
             }
             string result = await response.Content.ReadAsStringAsync();
@@ -55,7 +69,7 @@ namespace image_bot.Models.Commands
                         ["requestedFilter"] = message.Text
                     };
                     await client.PostAsync(QueryHelpers.AddQueryString(url, data), null);
-                    await botClient.SendTextMessageAsync(chatId, "Good. Now send me your image.", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                    await botClient.SendTextMessageAsync(chatId, "Good. Now send me your image.", replyMarkup: new ReplyKeyboardRemove(), parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
                     break;
                 case ApplyFilterStus.AwaitingImage:
                     var file = await botClient.GetFileAsync(message.Photo.LastOrDefault()?.FileId);
@@ -79,6 +93,66 @@ namespace image_bot.Models.Commands
                     break;
             }
         }
+    
+        private ReplyKeyboardMarkup createKeyboard()
+        {
+            var rkm = new ReplyKeyboardMarkup();
+            rkm.OneTimeKeyboard = true;
+            KeyboardButton[] kewboardRow = new KeyboardButton[3];
+            var rows = new List<KeyboardButton[]>();
+            var cols = new List<KeyboardButton>();
+            AvailableFilters[] filters = (AvailableFilters[])Enum.GetValues(typeof(AvailableFilters));
+
+
+            rows.Add(new KeyboardButton[] { new KeyboardButton("view gallery") });
+            for (int i = 0; i < filters.Length; i++)
+            {
+                cols.Add(new KeyboardButton(filters[i].ToString()));
+                if (i % 3 == 0 && i != 0)
+                {
+                    rows.Add(cols.ToArray());
+                    cols = new List<KeyboardButton>();
+                }
+            }
+            rkm.Keyboard = rows.ToArray();
+            
+
+
+/*
+            rkm.Keyboard = new KeyboardButton[][]
+            {
+                    new KeyboardButton[]
+                    {
+                        new KeyboardButton("Show Gallery")
+                    },
+                    new KeyboardButton[]
+                    {
+                        new KeyboardButton("Negate"),
+                        new KeyboardButton("Auto Brightness"),
+                        new KeyboardButton("Sepia")
+                    },
+                    new KeyboardButton[]
+                    {
+                        new KeyboardButton("Blackwhite"),
+                        new KeyboardButton(""),
+                        new KeyboardButton("")
+                    },
+                    new KeyboardButton[]
+                    {
+                        new KeyboardButton("sepia"),
+                        new KeyboardButton(""),
+                        new KeyboardButton("")
+                    },
+                    new KeyboardButton[]
+                    {
+                        new KeyboardButton("blackwhite")
+                    }
+            };
+*/
+            return rkm;
+        }
     }
     
 }
+
+//                 
