@@ -36,6 +36,7 @@ namespace image_bot.Controllers
             return Created(uri, imageResizeRequest);
         }
 
+
         [Route("create-request")]
         [HttpPost]
         public async Task<ActionResult> CreateRequest(long chatId)

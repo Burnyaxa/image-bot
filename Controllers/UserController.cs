@@ -86,5 +86,16 @@ namespace image_bot.Controllers
                     return NotFound();
             }
         }
+
+        [Route("/{chatId}")]
+        [HttpDelete]
+        public async Task<IActionResult> Delete(long chatId)
+        {
+            BotUser user = db.BotUsers.Where(b => b.ChatId == chatId).FirstOrDefault();
+            if (user == null) return NotFound();
+            db.BotUsers.Remove(user);
+            await db.SaveChangesAsync();
+            return NoContent();
+        }
     }
 }
