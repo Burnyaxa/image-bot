@@ -12,12 +12,12 @@ namespace image_bot.Controllers
 {
     [Route("api/image-resize-requests")]
     [ApiController]
-    public class ImageController : ControllerBase
+    public class ImageResizeRequestController : ControllerBase
     {
         public UsersState db;
         public Cloudinary cloudinary;
         public Account account;
-        public ImageController(UsersState context)
+        public ImageResizeRequestController(UsersState context)
         {
             db = context;
             account = new Account(AppSettings.CloudName, AppSettings.Cloudkey, AppSettings.CloudSecret);
@@ -36,7 +36,7 @@ namespace image_bot.Controllers
             return Created(uri, imageResizeRequest);
         }
 
-        [Route("/{userId}")]
+        [Route("{userId}")]
         [HttpGet]
         public IActionResult GetByUserId(int userId)
         {
@@ -53,7 +53,7 @@ namespace image_bot.Controllers
             return new OkObjectResult(imageResizeRequest);
         }
 
-        [Route("/{userId}")]
+        [Route("{userId}")]
         [HttpPut]
         public async Task<IActionResult> Put(int userId, [FromBody] ImageResizeRequest request)
         {
@@ -69,6 +69,16 @@ namespace image_bot.Controllers
             return Created(uri, request);
         }
 
+        [Route("{userId}")]
+        [HttpDelete]
+        public async Task<IActionResult> Delete(int userId)
+        {
+            ImageResizeRequest request = db.ImageResizeRequests.Where(i => i.UserId == userId).FirstOrDefault();
+            if (request == null) return NotFound();
+            db.ImageResizeRequests.Remove(request);
+            await db.SaveChangesAsync();
+            return NoContent();
+        }
 
         [Route("create-request")]
         [HttpPost]
