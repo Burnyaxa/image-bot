@@ -42,19 +42,9 @@ namespace image_bot.Models.Commands
                 url = string.Format(AppSettings.Url, "api/filter/create-request");
                 await client.PostAsync(QueryHelpers.AddQueryString(url, query), null);
 
-                //
-                //
-                //
                 var rkm = createKeyboard();
              
-                //await bot.SendTextMessage(update.Message.Chat.Id, msg, false, false, 0, rkm);
-
-
-                //
-                //
-                //
                 await botClient.SendTextMessageAsync(chatId, "Please input parameters of the future image in format heightxwidth.", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown, false, false, 0, rkm);
-                // await botClient.SendTextMessageAsync(chatId, "Please input filter your preferred filter name.", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
                 return;
             }
             string result = await response.Content.ReadAsStringAsync();
@@ -116,43 +106,9 @@ namespace image_bot.Models.Commands
             }
             rkm.Keyboard = rows.ToArray();
             
-
-
-/*
-            rkm.Keyboard = new KeyboardButton[][]
-            {
-                    new KeyboardButton[]
-                    {
-                        new KeyboardButton("Show Gallery")
-                    },
-                    new KeyboardButton[]
-                    {
-                        new KeyboardButton("Negate"),
-                        new KeyboardButton("Auto Brightness"),
-                        new KeyboardButton("Sepia")
-                    },
-                    new KeyboardButton[]
-                    {
-                        new KeyboardButton("Blackwhite"),
-                        new KeyboardButton(""),
-                        new KeyboardButton("")
-                    },
-                    new KeyboardButton[]
-                    {
-                        new KeyboardButton("sepia"),
-                        new KeyboardButton(""),
-                        new KeyboardButton("")
-                    },
-                    new KeyboardButton[]
-                    {
-                        new KeyboardButton("blackwhite")
-                    }
-            };
-*/
             return rkm;
         }
     }
     
 }
-
-//                 
+           
