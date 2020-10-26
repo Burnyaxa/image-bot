@@ -55,7 +55,7 @@ namespace image_bot.Models.Commands
                 };
                 await client.PostAsync(QueryHelpers.AddQueryString(url, query), null);
 
-                user.CurentCommand = BotCommand.Resize;
+                user.CurentCommand = BotCommand.ApplyFilter;
 
                 url = string.Format(AppSettings.Url, "api/users/") + chatId.ToString();
                 await client.PutAsync(url, new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json"));

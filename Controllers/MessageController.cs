@@ -31,7 +31,7 @@ namespace image_bot.Controllers
         }
         // POST api/values
         [Route("update")]
-        [IgnoreAntiforgeryToken]
+//        [IgnoreAntiforgeryToken]
         [HttpPost]
         public async Task<OkResult> Update([FromBody]Update update)
         {
