@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
 using Telegram.Bot.Types.ReplyMarkups;
 
+
 namespace image_bot.Models.Commands
 {
     public class ApplyFilterCommand : Command
@@ -41,10 +42,9 @@ namespace image_bot.Models.Commands
             {
                 url = string.Format(AppSettings.Url, "api/filter/create-request");
                 await client.PostAsync(QueryHelpers.AddQueryString(url, query), null);
-
                 var rkm = createKeyboard();
              
-                await botClient.SendTextMessageAsync(chatId, "Please input parameters of the future image in format heightxwidth.", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown, false, false, 0, rkm);
+                await botClient.SendTextMessageAsync(chatId, "Please input your preferred filter.", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown, false, false, 0, rkm);
                 return;
             }
             string result = await response.Content.ReadAsStringAsync();
@@ -60,6 +60,7 @@ namespace image_bot.Models.Commands
                     };
                     await client.PostAsync(QueryHelpers.AddQueryString(url, data), null);
                     await botClient.SendTextMessageAsync(chatId, "Good. Now send me your image.", replyMarkup: new ReplyKeyboardRemove(), parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+
                     break;
                 case ApplyFilterStus.AwaitingImage:
                     var file = await botClient.GetFileAsync(message.Photo.LastOrDefault()?.FileId);
@@ -83,7 +84,7 @@ namespace image_bot.Models.Commands
                     break;
             }
         }
-    
+        
         private ReplyKeyboardMarkup createKeyboard()
         {
             var rkm = new ReplyKeyboardMarkup();
@@ -111,4 +112,3 @@ namespace image_bot.Models.Commands
     }
     
 }
-           

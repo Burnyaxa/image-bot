@@ -29,6 +29,7 @@ namespace image_bot.Models
             //TODO: Add more commands
             commandsList.Add(new CreateMircroStickersCommand());
 
+
             botClient = new TelegramBotClient(AppSettings.Key);
             string hook = string.Format(AppSettings.Url, "api/message/update");
             await botClient.SetWebhookAsync(hook);
