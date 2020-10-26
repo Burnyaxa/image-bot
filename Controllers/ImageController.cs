@@ -10,7 +10,7 @@ using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 namespace image_bot.Controllers
 {
-    [Route("api/image")]
+    [Route("api/image-resize-requests")]
     [ApiController]
     public class ImageController : ControllerBase
     {
@@ -22,6 +22,18 @@ namespace image_bot.Controllers
             db = context;
             account = new Account(AppSettings.CloudName, AppSettings.Cloudkey, AppSettings.CloudSecret);
             cloudinary = new Cloudinary(account);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Post(int userId)
+        {
+            BotUser user = new BotUser() { Id = userId };
+            if (db.ImageResizeRequests.Any(b => b.UserId == user.Id)) return BadRequest("Cannot create an existing request.");
+            ImageResizeRequest imageResizeRequest = new ImageResizeRequest() { UserId = user.Id };
+            db.ImageResizeRequests.Add(imageResizeRequest);
+            await db.SaveChangesAsync();
+            string uri = String.Format(AppSettings.Url, "api/image-resize-requests/") + user.Id.ToString();
+            return Created(uri, imageResizeRequest);
         }
 
         [Route("create-request")]
