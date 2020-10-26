@@ -48,7 +48,7 @@ namespace image_bot.Controllers
 
         [Route("/{chatId}")]
         [HttpPut]
-        public async Task<IActionResult> Put(long chatId, BotUser user)
+        public async Task<IActionResult> Put(long chatId, [FromBody]BotUser user)
         {
             if(db.BotUsers.Any(b => b.ChatId == chatId))
             {
@@ -62,84 +62,29 @@ namespace image_bot.Controllers
             return Created(uri, user);
         }
 
-
-
-        [Route("create")]
-        [HttpPost]
-        public async Task<IActionResult> Create(long chatId)
-        {
-            _logger.LogInformation(chatId.ToString());
-            if(db.BotUsers.Any(c => c.ChatId == chatId))
-            {
-                return BadRequest();
-            }
-            db.BotUsers.Add(new BotUser() { ChatId = chatId});
-            await db.SaveChangesAsync();
-            return Ok();
-        }
-
-        [Route("update")]
-        [HttpPost]
-        public async Task<IActionResult> Update(long chatId, BotCommand command)
-        {
-            if (db.BotUsers.Any(c => c.ChatId == chatId))
-            {
-                BotUser user = db.BotUsers.Where(b => b.ChatId == chatId).First();
-                user.CurentCommand = command;
-                db.BotUsers.Update(user);
-                await db.SaveChangesAsync();
-                return Ok();
-            }
-            return BadRequest();
-        }
-
-        [Route("get-status")]
+        [Route("/{chatId}/requests")]
         [HttpGet]
-        public IActionResult GetStatus(long chatId)
+        public IActionResult GetRequests(long chatId)
         {
-            if (db.BotUsers.Any(c => c.ChatId == chatId))
+            BotUser user = db.BotUsers.Where(b => b.ChatId == chatId).FirstOrDefault();
+            if (user == null) return NotFound();
+            switch (user.CurentCommand)
             {
-                BotUser user = db.BotUsers.Where(b => b.ChatId == chatId).First();
-                switch (user.CurentCommand)
-                {
-                    case BotCommand.Resize:
-                        var resizeImageStatus = db.ImageResizeRequests.Include(u => u.User).Where(u => u.UserId == user.Id);
-                        return new OkObjectResult(resizeImageStatus.First().Status);
-                    case BotCommand.ApplyFilter:
-                        var applyFilterStatus = db.ApplyFilterRequests.Include(u => u.User).Where(u => u.UserId == user.Id);
-                        return new OkObjectResult(applyFilterStatus.First().Status);
-                    case BotCommand.CreateMicroStickers:
-                        var createMicroStickersStatus = db.CreateMicroStickersRequests.Include(u => u.User).Where(u => u.UserId == user.Id);
-                        return new OkObjectResult(createMicroStickersStatus.First().Status);    
-                    default:
-                        return BadRequest();
-                }
+                case BotCommand.Resize:
+                    ImageResizeRequest imageResizeRequest = db.ImageResizeRequests.Include(b => b.User).Where(b => b.UserId == user.Id).FirstOrDefault();
+                    if (imageResizeRequest == null) return NotFound();
+                    return new OkObjectResult(imageResizeRequest);
+                case BotCommand.CreateMicroStickers:
+                    CreateMicroStickersRequest microStickersRequest = db.CreateMicroStickersRequests.Include(b => b.User).Where(b => b.UserId == user.Id).FirstOrDefault();
+                    if (microStickersRequest == null) return NotFound();
+                    return new OkObjectResult(microStickersRequest);
+                case BotCommand.ApplyFilter:
+                    ApplyFilterRequest applyFilterRequest = db.ApplyFilterRequests.Include(b => b.User).Where(b => b.UserId == user.Id).FirstOrDefault();
+                    if (applyFilterRequest == null) return NotFound();
+                    return new OkObjectResult(applyFilterRequest);
+                default:
+                    return NotFound();
             }
-            return BadRequest();
         }
-
-        /*
-        [Route("get-status")]
-        [HttpGet]
-        public IActionResult GetStatus(BotUser user)
-        {
-            if (db.BotUsers.Any(c => c.ChatId == user.ChatId))
-            {
-                switch (user.CurentCommand)
-                {
-                    case BotCommand.Resize:
-                        var resizeImageStatus = db.ImageResizeRequests.Include(u => u.User).Where(u => u.UserId == user.Id);
-                        return new OkObjectResult(resizeImageStatus.First().Status);
-                    case BotCommand.ApplyFilter:
-                        var applyFilterStatus = db.ApplyFilterRequests.Include(u => u.User).Where(u => u.UserId == user.Id);
-                        return new OkObjectResult(applyFilterStatus.First().Status);
-                    //TODO: Add micro-stickers case
-                    default:
-                        return new BadRequestObjectResult(null);
-                }
-            }
-            return new BadRequestObjectResult(null);
-        }
-        */
     }
 }
