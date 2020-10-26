@@ -42,6 +42,7 @@ namespace image_bot.Controllers
             var commands = Bot.Commands;
             var message = update.Message;
             var botClient = await Bot.GetBotClientAsync();
+
             foreach (var command in commands)
             {
                 if (command.Contains(message))
@@ -58,8 +59,11 @@ namespace image_bot.Controllers
                     return Ok();
                 case Models.BotCommand.ApplyFilter:
                     await commands.Where(c => c.Name == "/filter").First().Execute(message, botClient);
+                    return Ok();
                 case Models.BotCommand.CreateMicroStickers:
+                    
                     await commands.Where(c => c.Name == "/micro-stickers").First().Execute(message, botClient);
+                    
                     return Ok();
             }
             return Ok();
