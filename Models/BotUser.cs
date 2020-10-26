@@ -34,6 +34,6 @@ namespace image_bot.Models
 
         public List<ImageResizeRequest> ImageResizeRequests { get; set; }
         public List<ApplyFilterRequest> ApplyFilterRequests { get; set; }
-
+        public List<CreateMicroStickersRequest> CreateMicroStickersRequests { get; set; }
     }
 }

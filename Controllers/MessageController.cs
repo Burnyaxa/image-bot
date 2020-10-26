@@ -35,6 +35,7 @@ namespace image_bot.Controllers
         [HttpPost]
         public async Task<OkResult> Update([FromBody]Update update)
         {
+            
             //return Ok();
             //_logger.LogInformation(db.Users.);
             if (update == null) return Ok();
