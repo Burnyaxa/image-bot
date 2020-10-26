@@ -27,6 +27,8 @@ namespace image_bot.Models
             commandsList.Add(new ImageResizeCommand());
             commandsList.Add(new ApplyFilterCommand());
             //TODO: Add more commands
+            commandsList.Add(new CreateMircroStickersCommand());
+
 
             botClient = new TelegramBotClient(AppSettings.Key);
             string hook = string.Format(AppSettings.Url, "api/message/update");

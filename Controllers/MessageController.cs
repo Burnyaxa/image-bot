@@ -58,6 +58,8 @@ namespace image_bot.Controllers
                     return Ok();
                 case Models.BotCommand.ApplyFilter:
                     await commands.Where(c => c.Name == "/filter").First().Execute(message, botClient);
+                case Models.BotCommand.CreateMicroStickers:
+                    await commands.Where(c => c.Name == "/micro-stickers").First().Execute(message, botClient);
                     return Ok();
             }
             return Ok();
