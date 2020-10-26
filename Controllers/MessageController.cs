@@ -31,7 +31,7 @@ namespace image_bot.Controllers
         }
         // POST api/values
         [Route("update")]
-//        [IgnoreAntiforgeryToken]
+        [IgnoreAntiforgeryToken]
         [HttpPost]
         public async Task<OkResult> Update([FromBody]Update update)
         {
@@ -62,9 +62,8 @@ namespace image_bot.Controllers
                     await commands.Where(c => c.Name == "/filter").First().Execute(message, botClient);
                     return Ok();
                 case Models.BotCommand.CreateMicroStickers:
-                    
+                    Task.Delay(1).ContinueWith((task) => { return Ok(); });
                     await commands.Where(c => c.Name == "/micro-stickers").First().Execute(message, botClient);
-                    
                     return Ok();
             }
             return Ok();
