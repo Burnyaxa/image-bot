@@ -33,6 +33,19 @@ namespace image_bot.Controllers
             string uri = String.Format(AppSettings.Url, "api/users/") + user.Id;
             return Created(uri, user);
         }
+
+        [Route("/{chatId}")]
+        [HttpGet]
+        public IActionResult GetByChatId(long chatId)
+        {
+            BotUser user = db.BotUsers.Where(b => b.ChatId == chatId).FirstOrDefault();
+            if(user == null)
+            {
+                return NotFound();
+            }
+            return new OkObjectResult(user);
+        }
+
         [Route("create")]
         [HttpPost]
         public async Task<IActionResult> Create(long chatId)
