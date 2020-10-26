@@ -1,19 +1,19 @@
-﻿using Microsoft.AspNetCore.WebUtilities;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using System.Net.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
+using Newtonsoft.Json;
 
 namespace image_bot.Models.Commands
 {
-    public class ImageResizeCommand : Command
+    public class ApplyFilterCommand : Command
     {
-        public override string Name => @"/resize";
+        public override string Name => @"/filter";
 
         public override bool Contains(Message message)
         {
@@ -33,52 +33,52 @@ namespace image_bot.Models.Commands
                 ["chatId"] = chatId.ToString()
             };
 
+            // if there's no current request for this user
+            // create new filter request for this user
             var response = await client.GetAsync(QueryHelpers.AddQueryString(url, query));
             if (!response.IsSuccessStatusCode)
             {
-                url = string.Format(AppSettings.Url, "api/image/create-request");
+                url = string.Format(AppSettings.Url, "api/filter/create-request");
                 await client.PostAsync(QueryHelpers.AddQueryString(url, query), null);
-                await botClient.SendTextMessageAsync(chatId, "Please input parameters of the future image in format heightxwidth.", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                await botClient.SendTextMessageAsync(chatId, "Please input filter your preferred filter name.", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
                 return;
             }
             string result = await response.Content.ReadAsStringAsync();
-            ImageResizeStatus status = JsonConvert.DeserializeObject<ImageResizeStatus>(result);
+            ApplyFilterStus status = JsonConvert.DeserializeObject<ApplyFilterStus>(result);
             switch (status)
             {
-                case ImageResizeStatus.AwaitingSize:
-                    string height = message.Text.Split(':')[0];
-                    string width = message.Text.Split(':')[1];
-                    url = string.Format(AppSettings.Url, "api/image/set-parameters");
+                case ApplyFilterStus.AwaitingFilterSelect:
+                    url = string.Format(AppSettings.Url, "api/filter/choose");
                     var data = new Dictionary<string, string>()
                     {
                         ["chatId"] = chatId.ToString(),
-                        ["height"] = height,
-                        ["width"] = width 
+                        ["requestedFilter"] = message.Text
                     };
                     await client.PostAsync(QueryHelpers.AddQueryString(url, data), null);
                     await botClient.SendTextMessageAsync(chatId, "Good. Now send me your image.", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
                     break;
-                case ImageResizeStatus.AwaitingImage:
+                case ApplyFilterStus.AwaitingImage:
                     var file = await botClient.GetFileAsync(message.Photo.LastOrDefault()?.FileId);
                     string baseUrl = string.Format("https://api.telegram.org/file/bot{0}/{1}", AppSettings.Key, file.FilePath);
-                    url = string.Format(AppSettings.Url, "api/image/resize");
+                    url = string.Format(AppSettings.Url, "api/filter/apply");
                     query = new Dictionary<string, string>
                     {
                         ["chatId"] = chatId.ToString(),
                         ["url"] = baseUrl
                     };
-                    response = await client.GetAsync(QueryHelpers.AddQueryString(url, query));
+                    response = await client.PostAsync(QueryHelpers.AddQueryString(url, query), null);
                     result = await response.Content.ReadAsStringAsync();
                     string imageUrl = JsonConvert.DeserializeObject<string>(result);
                     await botClient.SendPhotoAsync(chatId, imageUrl);
-                    url = string.Format(AppSettings.Url, "api/image/delete-request");
+                    url = string.Format(AppSettings.Url, "api/filter/delete-request");
                     query = new Dictionary<string, string>
                     {
                         ["chatId"] = chatId.ToString(),
                     };
                     await client.DeleteAsync(QueryHelpers.AddQueryString(url, query));
-                    break;                       
+                    break;
             }
         }
     }
+    
 }

@@ -7,8 +7,8 @@ namespace image_bot.Models
 {
     public enum ApplyFilterStus
     {
-        AwaitingImage,
-        AwaitingFilterSelect
+        AwaitingFilterSelect,
+        AwaitingImage        
     }
     public class ApplyFilterRequest
     {
@@ -19,5 +19,6 @@ namespace image_bot.Models
         /// has default value inicial in UsersState
         /// </summary>
         public ApplyFilterStus Status { get; set; }
+        public AvailableFilters ChosenFilter { get; set; }
     }
 }
