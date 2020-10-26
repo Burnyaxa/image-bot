@@ -12,6 +12,7 @@ namespace image_bot.Controllers
 {
     [Route("api/image-resize-requests")]
     [ApiController]
+    [Produces("application/json")]
     public class ImageResizeRequestController : ControllerBase
     {
         public UsersState db;
@@ -57,7 +58,7 @@ namespace image_bot.Controllers
         [HttpPut]
         public async Task<IActionResult> Put(int userId, [FromBody] ImageResizeRequest request)
         {
-            if (db.ImageResizeRequests.Any(b => b.Id == request.Id))
+            if (db.ImageResizeRequests.Any(b => b.UserId == userId))
             {
                 db.Update(request);
                 await db.SaveChangesAsync();

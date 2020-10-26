@@ -12,6 +12,7 @@ namespace image_bot.Controllers
 {
     [Route("api/image")]
     [ApiController]
+    [Produces("application/json")]
     public class ImageController : ControllerBase
     {
         public Cloudinary cloudinary;

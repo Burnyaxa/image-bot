@@ -13,6 +13,7 @@ namespace image_bot.Controllers
 {
     [Route("api/users")]
     [ApiController]
+    [Produces("application/json")]
     public class UserController : ControllerBase
     {
         public UsersState db;
