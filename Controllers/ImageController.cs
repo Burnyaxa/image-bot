@@ -53,6 +53,23 @@ namespace image_bot.Controllers
             return new OkObjectResult(imageResizeRequest);
         }
 
+        [Route("/{userId}")]
+        [HttpPut]
+        public async Task<IActionResult> Put(int userId, [FromBody] ImageResizeRequest request)
+        {
+            if (db.ImageResizeRequests.Any(b => b.Id == request.Id))
+            {
+                db.Update(request);
+                await db.SaveChangesAsync();
+                return Ok();
+            }
+            db.ImageResizeRequests.Add(request);
+            await db.SaveChangesAsync();
+            string uri = String.Format(AppSettings.Url, "api/image-resize-requests/") + request.User.Id.ToString();
+            return Created(uri, request);
+        }
+
+
         [Route("create-request")]
         [HttpPost]
         public async Task<ActionResult> CreateRequest(long chatId)
