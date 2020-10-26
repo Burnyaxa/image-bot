@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace image_bot.Controllers
 {
-    [Route("api/user")]
+    [Route("api/users")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -23,6 +23,16 @@ namespace image_bot.Controllers
             _logger = logger;
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Post(long chatId)
+        { 
+            BotUser user = new BotUser() { ChatId = chatId };
+            if (db.BotUsers.Any(b => b.ChatId == user.ChatId)) return BadRequest("Cannot create an existing user.");
+            db.BotUsers.Add(user);
+            await db.SaveChangesAsync();
+            string uri = String.Format(AppSettings.Url, "api/users/") + user.Id;
+            return Created(uri, user);
+        }
         [Route("create")]
         [HttpPost]
         public async Task<IActionResult> Create(long chatId)
