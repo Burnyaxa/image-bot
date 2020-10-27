@@ -11,21 +11,30 @@ using Microsoft.EntityFrameworkCore;
 
 namespace image_bot.Controllers
 {
-    [Route("api/micro-sticker")]
+    [Route("api/micro-sticker-requests")]
     [ApiController]
-    public class MicroStickerController : ControllerBase
+    public class MicroStickerRequestController : ControllerBase
     {
         public UsersState db;
-        public Cloudinary cloudinary;
-        public Account account;
 
         private const int _stickerWidth = 512;
         private const int _stickerHeight = 100;
-        public MicroStickerController(UsersState context)
+        public MicroStickerRequestController(UsersState context)
         {
             db = context;
-            account = new Account(AppSettings.CloudName, AppSettings.CloudKey, AppSettings.CloudSecret);
-            cloudinary = new Cloudinary(account);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Post(int userId)
+        {
+            BotUser user = new BotUser() { Id = userId };
+            if (db.CreateMicroStickersRequests.Any(b => b.UserId == user.Id)) return BadRequest("Cannot create an existing request.");
+            CreateMicroStickersRequest request = new CreateMicroStickersRequest() { UserId = user.Id };
+            db.CreateMicroStickersRequests.Add(request);
+            await db.SaveChangesAsync();
+            string uri = String.Format(AppSettings.Url, "api/micro-sticker-requests/") + user.Id.ToString();
+            return Created(uri, request);
         }
 
         [Route("create-request")]
