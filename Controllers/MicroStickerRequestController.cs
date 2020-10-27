@@ -71,6 +71,16 @@ namespace image_bot.Controllers
             return Created(uri, request);
         }
 
+        [Route("{userId}")]
+        [HttpDelete]
+        public async Task<IActionResult> Delete(int userId)
+        {
+            CreateMicroStickersRequest request = db.CreateMicroStickersRequests.Where(i => i.UserId == userId).FirstOrDefault();
+            if (request == null) return NotFound();
+            db.CreateMicroStickersRequests.Remove(request);
+            await db.SaveChangesAsync();
+            return NoContent();
+        }
 
         [Route("create-request")]
         [HttpPost]
