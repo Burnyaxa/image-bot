@@ -38,3 +38,14 @@ A Telegram bot that is capable of resizing images, applying filters and creating
 - The bot should notify the user in case filter apllying API is unavailable and cancel the operaation
 ## Wireframe
 https://s3.amazonaws.com/assets.mockflow.com/app/wireframepro/company/C4fb765ef57424da78bb52e31a787de4e/projects/M319477100ced05987ca571ac0ab38ca21600159454912/pages/e7af36e065e54b5caf2a6605d947714b/image/e7af36e065e54b5caf2a6605d947714b.png 
+## High-Level Decisions
+### Development View
+![Development View](DevView.png "Development View")
+## API Design Guideline
+- Protocol: HTTPS
+- Format: JSON
+- REST API
+- Singular Nouns for Elements-Resources, Plural Nouns for Elements-Collections
+- API Versioning : api/{version}/... The base version is 1.0.0. Minor fixes increment last digit. New features inside existing entities increment middle digit. Global changes increment first digit.
+- GET methods return 200(OK) on success and 404(Not Found if the resource cannot be found. No body required. POST methods returns 201(Created) on successful resource creation and the URI of the new resource is included in the Location header of the response. The response body contains a representation of the resource. If the method does some processing but does not create a new resource, the method can return HTTP status code 204(No Content). If the client puts invalid data into the request, the server should return HTTP status code 400 (Bad Request). POST methods might have a body. PUT methods return 201(Created) on successful resource creation. If the method updates an existing resource, it returns either 200 (OK) or 204 (No Content). When updating is not possible then the method returns 409(Conflict). PUT methods require body. DELETE methods return 204(No Content) on a successful delete. If the resource doesn't exist, the web server return 404 (Not Found). No body required.
+- No other methods available.
