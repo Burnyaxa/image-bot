@@ -26,17 +26,13 @@ namespace image_bot.Models.Commands
         public override async Task Execute(Message message, TelegramBotClient botClient)
         {
             var chatId = message.Chat.Id;
-            string baseUrl = string.Format(AppSettings.Url, "api/user/create");
+            string baseUrl = string.Format(AppSettings.Url, "api/users");
             var query = new Dictionary<string, string>
             {
                 ["chatId"] = chatId.ToString()
             };
             HttpClient client = new HttpClient();
             HttpResponseMessage res = await client.PostAsync(QueryHelpers.AddQueryString(baseUrl, query), null);
-            HttpContent content = res.Content;
-            
-            
-
             await botClient.SendTextMessageAsync(chatId, "Hello and welcome to image-bot. Type '/' to see available commands.", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
         }
     }
