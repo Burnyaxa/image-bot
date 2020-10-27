@@ -17,6 +17,8 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Http;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
+using System.IO;
 
 namespace image_bot
 {
@@ -56,8 +58,11 @@ namespace image_bot
                         Email = "suprigan.artem1@gmail.com",
                         Url = new Uri("https://t.me/burnyaxa"),
                     }
-                });
             });
+            var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            c.IncludeXmlComments(xmlPath);
+        });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
