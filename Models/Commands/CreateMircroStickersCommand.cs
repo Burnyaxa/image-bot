@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.WebUtilities;
+﻿using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -12,6 +14,8 @@ namespace image_bot.Models.Commands
 {
     public class CreateMircroStickersCommand : Command
     {
+        private const int _stickerHeight = 100;
+        private const int _strickerWidth = 512;
         public override string Name => @"/micro-stickers";
 
         public override bool Contains(Message message)
@@ -24,37 +28,54 @@ namespace image_bot.Models.Commands
 
         public override async Task Execute(Message message, TelegramBotClient botClient)
         {
-            var chatId = message.Chat.Id;
+            long chatId = message.Chat.Id;
+            BotUser user;
+            CreateMicroStickersRequest request;
+            string url, result;
+            Dictionary<string, string> query;
+            HttpResponseMessage response;
             HttpClient client = new HttpClient();
-            string url = string.Format(AppSettings.Url, "api/user/get-status");
-            var query = new Dictionary<string, string>
-            {
-                ["chatId"] = chatId.ToString()
-            };
+            StickerToResize stickerToResize;
 
-            var response = await client.GetAsync(QueryHelpers.AddQueryString(url, query));
+            client = new HttpClient();
+            url = string.Format(AppSettings.Url, "api/users/") + chatId.ToString();
+            response = await client.GetAsync(url);
+            result = await response.Content.ReadAsStringAsync();
+            user = JsonConvert.DeserializeObject<BotUser>(result);
+
+            url = string.Format(AppSettings.Url, "api/users/") + chatId.ToString() + "/requests";
+
+            response = await client.GetAsync(url);
             if (!response.IsSuccessStatusCode)
             {
-                url = string.Format(AppSettings.Url, "api/micro-sticker/create-request");
+                url = string.Format(AppSettings.Url, "api/micro-sticker-requests");
+                query = new Dictionary<string, string>()
+                {
+                    ["userId"] = user.Id.ToString()
+                };
                 await client.PostAsync(QueryHelpers.AddQueryString(url, query), null);
+
+                user.CurentCommand = BotCommand.CreateMicroStickers;
+
+                url = string.Format(AppSettings.Url, "api/users/") + chatId.ToString();
+                await client.PutAsync(url, new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json"));
+
                 await botClient.SendTextMessageAsync(chatId, "Please input name of the future sticker pack.", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
                 return;
             }
 
-            string result = await response.Content.ReadAsStringAsync();
-            MicroStickersStatus status = JsonConvert.DeserializeObject<MicroStickersStatus>(result);
+            result = await response.Content.ReadAsStringAsync();
+            request = JsonConvert.DeserializeObject<CreateMicroStickersRequest>(result);
 
-            switch (status)
+            switch (request.Status)
             {
                 case MicroStickersStatus.AwaitingName:
                     string name = message.Text;
-                    url = string.Format(AppSettings.Url, "api/micro-sticker/name");
-                    var data = new Dictionary<string, string>()
-                    {
-                        ["chatId"] = chatId.ToString(),
-                        ["name"] = name
-                    };
-                    await client.PostAsync(QueryHelpers.AddQueryString(url, data), null);
+                    request.Name = name;
+                    request.Status = MicroStickersStatus.AwaitingSticker;
+                    url = string.Format(AppSettings.Url, "api/micro-sticker-requests/") + user.Id;
+                    await client.PutAsync(url, new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json"));
+
                     await botClient.SendTextMessageAsync(chatId, "Good. Now send me a sticker.", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
                     break;
                 case MicroStickersStatus.AwaitingSticker:
@@ -65,29 +86,24 @@ namespace image_bot.Models.Commands
                     foreach (var sticker in stickerSet.Stickers) {
                         var file = await botClient.GetFileAsync(sticker.FileId);
                         string baseUrl = string.Format("https://api.telegram.org/file/bot{0}/{1}", AppSettings.Key, file.FilePath);
-                        url = string.Format(AppSettings.Url, "api/micro-sticker/create-sticker");
-                        query = new Dictionary<string, string>
+                        url = string.Format(AppSettings.Url, "api/sticker/resize");
+                        stickerToResize = new StickerToResize()
                         {
-                            ["url"] = baseUrl
+                            Url = baseUrl,
+                            Width = _strickerWidth,
+                            Height = _stickerHeight
                         };
-                       
-                        response = await client.GetAsync(QueryHelpers.AddQueryString(url, query));
-                        result = await response.Content.ReadAsStringAsync();
 
-                        stickerImages.Add(JsonConvert.DeserializeObject<string>(result));
+                        response = await client.PostAsync(url, new StringContent(JsonConvert.SerializeObject(stickerToResize), Encoding.UTF8, "application/json"));
+                        result = await response.Content.ReadAsStringAsync();
+                        ImageUploadResult imageUrl = JsonConvert.DeserializeObject<ImageUploadResult>(result);
+
+                        stickerImages.Add(imageUrl.Url.ToString());
                         emojis.Add(sticker.Emoji);
                     }
 
-                    url = string.Format(AppSettings.Url, "api/micro-sticker/name");
-                    query = new Dictionary<string, string>
-                    {
-                        ["chatId"] = chatId.ToString()
-                    };
-
-                    response = await client.GetAsync(QueryHelpers.AddQueryString(url, query));
-                    result = await response.Content.ReadAsStringAsync();
                     int userId = message.From.Id;
-                    string stickerPackName = result;
+                    string stickerPackName = request.Name;
                     string shortStickerPackName = stickerPackName.ToLower().Replace(' ', '_') + "_by_burnyaxa_bot";
                     await botClient.CreateNewStickerSetAsync(userId, shortStickerPackName, stickerPackName, stickerImages.First(), emojis.First());
                     stickerImages.RemoveAt(0);
@@ -103,13 +119,13 @@ namespace image_bot.Models.Commands
                     await botClient.SendTextMessageAsync(chatId, "Enjoy your micro-stickers :)", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
                     await botClient.SendStickerAsync(chatId, newStickers.Stickers.First().FileId);
 
-                    url = string.Format(AppSettings.Url, "api/micro-sticker/delete-request");
-                    query = new Dictionary<string, string>
-                    {
-                        ["chatId"] = chatId.ToString()
-                    };
+                    url = string.Format(AppSettings.Url, "api/micro-sticker-requests/") + user.Id;
 
-                    response = await client.DeleteAsync(QueryHelpers.AddQueryString(url, query));
+                    await client.DeleteAsync(url);
+                    user.CurentCommand = BotCommand.Start;
+
+                    url = string.Format(AppSettings.Url, "api/users/") + chatId.ToString();
+                    await client.PutAsync(url, new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json"));
 
                     break;
             }

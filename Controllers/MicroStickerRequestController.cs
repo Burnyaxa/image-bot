@@ -17,8 +17,6 @@ namespace image_bot.Controllers
     {
         public UsersState db;
 
-        private const int _stickerWidth = 512;
-        private const int _stickerHeight = 100;
         public MicroStickerRequestController(UsersState context)
         {
             db = context;
