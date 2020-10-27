@@ -41,6 +41,10 @@ https://s3.amazonaws.com/assets.mockflow.com/app/wireframepro/company/C4fb765ef5
 ## High-Level Decisions
 ### Development View
 ![Development View](DevView.png "Development View")
+- User interacts with the application via Telegram Client, which send update messages every time a new chat message is sent to a client. Webhook technology is used for this purpose. Message Controller acts as a mediator making decisions on what API call should be performed. User command sent in chat are translated into API calls.
+- User Controller keeps track of all the users interacting with the Bot. Apply Filter Request Controller, Image Resize Request Controller, Micro Sticker Request Controller represent the state and parameters of a particular User request performed at the moment.
+- Filter Controller, Image Controller, Sticker Controller fulfil the request. By means Cloudinary.Net these Controllers apply transformation on requests. Cloudinary.Net stores transformed images for further access.
+- After transformation complete Message Controller recieves it's result and sends it to the User by means of Telegram.Bot.
 ## API Design Guideline
 - Protocol: HTTPS
 - Format: JSON
