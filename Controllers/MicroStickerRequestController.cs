@@ -37,6 +37,25 @@ namespace image_bot.Controllers
             return Created(uri, request);
         }
 
+
+        [Route("{userId}")]
+        [HttpGet]
+        public IActionResult GetByUserId(int userId)
+        {
+            BotUser user = db.BotUsers.Where(b => b.Id == userId).FirstOrDefault();
+            if (user == null)
+            {
+                return NotFound();
+            }
+            CreateMicroStickersRequest request = db.CreateMicroStickersRequests.Include(i => i.User).Where(i => i.UserId == user.Id).FirstOrDefault();
+            if (request == null)
+            {
+                return NotFound();
+            }
+            return new OkObjectResult(request);
+        }
+
+
         [Route("create-request")]
         [HttpPost]
         public async Task<ActionResult> CreateRequest(long chatId)
