@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace image_bot.Controllers
 {
-    [Route("api/message")]
+    [Route("api/1.0.0/message")]
     [ApiController]
     public class MessageController : ControllerBase
     {

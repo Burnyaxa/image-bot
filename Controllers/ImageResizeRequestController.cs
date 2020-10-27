@@ -10,7 +10,7 @@ using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 namespace image_bot.Controllers
 {
-    [Route("api/image-resize-requests")]
+    [Route("api/1.0.0/image-resize-requests")]
     [ApiController]
     [Produces("application/json")]
     public class ImageResizeRequestController : ControllerBase
@@ -41,7 +41,7 @@ namespace image_bot.Controllers
             ImageResizeRequest imageResizeRequest = new ImageResizeRequest() { UserId = user.Id };
             db.ImageResizeRequests.Add(imageResizeRequest);
             await db.SaveChangesAsync();
-            string uri = String.Format(AppSettings.Url, "api/image-resize-requests/") + user.Id.ToString();
+            string uri = String.Format(AppSettings.Url, "api/1.0.0/image-resize-requests/") + user.Id.ToString();
             return Created(uri, imageResizeRequest);
         }
 
@@ -92,7 +92,7 @@ namespace image_bot.Controllers
             }
             db.ImageResizeRequests.Add(request);
             await db.SaveChangesAsync();
-            string uri = String.Format(AppSettings.Url, "api/image-resize-requests/") + request.User.Id.ToString();
+            string uri = String.Format(AppSettings.Url, "api/1.0.0/image-resize-requests/") + request.User.Id.ToString();
             return Created(uri, request);
         }
 

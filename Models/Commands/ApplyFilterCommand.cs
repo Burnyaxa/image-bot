@@ -38,17 +38,17 @@ namespace image_bot.Models.Commands
             HttpClient client = new HttpClient();
             ImageToFilter image;
 
-            url = string.Format(AppSettings.Url, "api/users/") + chatId.ToString();
+            url = string.Format(AppSettings.Url, "api/1.0.0/users/") + chatId.ToString();
             response = await client.GetAsync(url);
             result = await response.Content.ReadAsStringAsync();
             user = JsonConvert.DeserializeObject<BotUser>(result);
 
-            url = string.Format(AppSettings.Url, "api/users/") + chatId.ToString() + "/requests";
+            url = string.Format(AppSettings.Url, "api/1.0.0/users/") + chatId.ToString() + "/requests";
 
             response = await client.GetAsync(url);
             if (!response.IsSuccessStatusCode)
             {
-                url = string.Format(AppSettings.Url, "api/apply-filter-requests");
+                url = string.Format(AppSettings.Url, "api/1.0.0/apply-filter-requests");
                 query = new Dictionary<string, string>()
                 {
                     ["userId"] = user.Id.ToString()
@@ -57,7 +57,7 @@ namespace image_bot.Models.Commands
 
                 user.CurentCommand = BotCommand.ApplyFilter;
 
-                url = string.Format(AppSettings.Url, "api/users/") + chatId.ToString();
+                url = string.Format(AppSettings.Url, "api/1.0.0/users/") + chatId.ToString();
                 await client.PutAsync(url, new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json"));
 
                 var rkm = createKeyboard();
@@ -72,17 +72,25 @@ namespace image_bot.Models.Commands
             switch (request.Status)
             {
                 case ApplyFilterStus.AwaitingFilterSelect:
+                    
+                    if (message.Text == "view gallery")
+                    {
+                        await botClient.SendPhotoAsync(chatId, "https://res.cloudinary.com/drnmey6bv/image/upload/v1603798791/image-bot/galery.png");
+                        return;
+                    }
+                    
                     request.ChosenFilter = (AvailableFilters)Enum.Parse(typeof(AvailableFilters), message.Text);
+                    
                     request.Status = ApplyFilterStus.AwaitingImage;
-                    url = string.Format(AppSettings.Url, "api/apply-filter-requests/") + user.Id;
+                    url = string.Format(AppSettings.Url, "api/1.0.0/apply-filter-requests/") + user.Id;
 
                     await client.PutAsync(url, new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json"));
-                    await botClient.SendTextMessageAsync(chatId, "Good. Now send me your image.", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                    await botClient.SendTextMessageAsync(chatId, "Good. Now send me your image.", replyMarkup: new ReplyKeyboardRemove(), parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
                     break;
                 case ApplyFilterStus.AwaitingImage:
                     var file = await botClient.GetFileAsync(message.Photo.LastOrDefault()?.FileId);
                     string baseUrl = string.Format("https://api.telegram.org/file/bot{0}/{1}", AppSettings.Key, file.FilePath);
-                    url = string.Format(AppSettings.Url, "api/filter/apply");
+                    url = string.Format(AppSettings.Url, "api/1.0.0/filter/apply");
                     image = new ImageToFilter()
                     {
                         Url = baseUrl,
@@ -97,7 +105,7 @@ namespace image_bot.Models.Commands
                     result = await response.Content.ReadAsStringAsync();
                     ImageUploadResult imageUrl = JsonConvert.DeserializeObject<ImageUploadResult>(result);
                     await botClient.SendPhotoAsync(chatId, imageUrl.Url.ToString());
-                    url = string.Format(AppSettings.Url, "api/apply-filter-requests/") + user.Id;
+                    url = string.Format(AppSettings.Url, "api/1.0.0/apply-filter-requests/") + user.Id;
                     //query = new Dictionary<string, string>
                     //{
                     //    ["chatId"] = chatId.ToString(),
@@ -105,7 +113,7 @@ namespace image_bot.Models.Commands
                     await client.DeleteAsync(url);
                     user.CurentCommand = BotCommand.Start;
 
-                    url = string.Format(AppSettings.Url, "api/users/") + chatId.ToString();
+                    url = string.Format(AppSettings.Url, "api/1.0.0/users/") + chatId.ToString();
                     await client.PutAsync(url, new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json"));
                     break;
             }
@@ -117,7 +125,7 @@ namespace image_bot.Models.Commands
             {
                 var chatId = message.Chat.Id;
                 HttpClient client = new HttpClient();
-                string url = string.Format(AppSettings.Url, "api/user/get-status");
+                string url = string.Format(AppSettings.Url, "api/1.0.0/user/get-status");
                 var query = new Dictionary<string, string>
                 {
                     ["chatId"] = chatId.ToString()
@@ -128,7 +136,7 @@ namespace image_bot.Models.Commands
                 var response = await client.GetAsync(QueryHelpers.AddQueryString(url, query));
                 if (!response.IsSuccessStatusCode)
                 {
-                    url = string.Format(AppSettings.Url, "api/filter/create-request");
+                    url = string.Format(AppSettings.Url, "api/1.0.0/filter/create-request");
                     await client.PostAsync(QueryHelpers.AddQueryString(url, query), null);
                     var rkm = createKeyboard();
 
@@ -140,7 +148,7 @@ namespace image_bot.Models.Commands
                 switch (status)
                 {
                     case ApplyFilterStus.AwaitingFilterSelect:
-                        url = string.Format(AppSettings.Url, "api/filter/choose");
+                        url = string.Format(AppSettings.Url, "api/1.0.0/filter/choose");
                         var data = new Dictionary<string, string>()
                         {
                             ["chatId"] = chatId.ToString(),
@@ -153,7 +161,7 @@ namespace image_bot.Models.Commands
                     case ApplyFilterStus.AwaitingImage:
                         var file = await botClient.GetFileAsync(message.Photo.LastOrDefault()?.FileId);
                         string baseUrl = string.Format("https://api.telegram.org/file/bot{0}/{1}", AppSettings.Key, file.FilePath);
-                        url = string.Format(AppSettings.Url, "api/filter/apply");
+                        url = string.Format(AppSettings.Url, "api/1.0.0/filter/apply");
                         query = new Dictionary<string, string>
                         {
                             ["chatId"] = chatId.ToString(),
@@ -163,7 +171,7 @@ namespace image_bot.Models.Commands
                         result = await response.Content.ReadAsStringAsync();
                         string imageUrl = JsonConvert.DeserializeObject<string>(result);
                         await botClient.SendPhotoAsync(chatId, imageUrl);
-                        url = string.Format(AppSettings.Url, "api/filter/delete-request");
+                        url = string.Format(AppSettings.Url, "api/1.0.0/filter/delete-request");
                         query = new Dictionary<string, string>
                         {
                             ["chatId"] = chatId.ToString(),
@@ -203,7 +211,7 @@ namespace image_bot.Models.Commands
         private ReplyKeyboardMarkup createKeyboard()
         {
             var rkm = new ReplyKeyboardMarkup();
-            rkm.OneTimeKeyboard = true;
+            //rkm.OneTimeKeyboard = true;
             KeyboardButton[] kewboardRow = new KeyboardButton[3];
             var rows = new List<KeyboardButton[]>();
             var cols = new List<KeyboardButton>();

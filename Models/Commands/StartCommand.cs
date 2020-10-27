@@ -26,7 +26,7 @@ namespace image_bot.Models.Commands
         public override async Task Execute(Message message, TelegramBotClient botClient)
         {
             var chatId = message.Chat.Id;
-            string baseUrl = string.Format(AppSettings.Url, "api/users");
+            string baseUrl = string.Format(AppSettings.Url, "api/1.0.0/users");
             var query = new Dictionary<string, string>
             {
                 ["chatId"] = chatId.ToString()

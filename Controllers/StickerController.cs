@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using image_bot.Models;
 namespace image_bot.Controllers
 {
-    [Route("api/sticker")]
+    [Route("api/1.0.0/sticker")]
     [ApiController]
     public class StickerController : ControllerBase
     {

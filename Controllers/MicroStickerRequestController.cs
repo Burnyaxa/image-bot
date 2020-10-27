@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace image_bot.Controllers
 {
-    [Route("api/micro-sticker-requests")]
+    [Route("api/1.0.0/micro-sticker-requests")]
     [ApiController]
     
     public class MicroStickerRequestController : ControllerBase
@@ -40,7 +40,7 @@ namespace image_bot.Controllers
             CreateMicroStickersRequest request = new CreateMicroStickersRequest() { UserId = user.Id };
             db.CreateMicroStickersRequests.Add(request);
             await db.SaveChangesAsync();
-            string uri = String.Format(AppSettings.Url, "api/micro-sticker-requests/") + user.Id.ToString();
+            string uri = String.Format(AppSettings.Url, "api/1.0.0/micro-sticker-requests/") + user.Id.ToString();
             return Created(uri, request);
         }
 
@@ -93,7 +93,7 @@ namespace image_bot.Controllers
             }
             db.CreateMicroStickersRequests.Add(request);
             await db.SaveChangesAsync();
-            string uri = String.Format(AppSettings.Url, "api/micro-sticker-requests/") + request.User.Id.ToString();
+            string uri = String.Format(AppSettings.Url, "api/1.0.0/micro-sticker-requests/") + request.User.Id.ToString();
             return Created(uri, request);
         }
 
