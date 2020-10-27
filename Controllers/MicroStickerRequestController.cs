@@ -13,6 +13,7 @@ namespace image_bot.Controllers
 {
     [Route("api/micro-sticker-requests")]
     [ApiController]
+    
     public class MicroStickerRequestController : ControllerBase
     {
         public UsersState db;
