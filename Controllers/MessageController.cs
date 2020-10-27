@@ -22,17 +22,16 @@ namespace image_bot.Controllers
             _logger = logger;
             db = context;
         }
-        // GET api/values
-        [HttpGet]
-        public string Get()
-        {
-            _logger.LogInformation("ok.");
-            return "Method GET unuvalable";
-        }
-        // POST api/values
+
+        /// <summary>
+        /// Receive an Update from Telegram Client
+        /// </summary>
+        /// <param name="update"></param>
+        /// <response code="200">Update received</response>
         [Route("update")]
         [IgnoreAntiforgeryToken]
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<OkResult> Update([FromBody]Update update)
         {
             

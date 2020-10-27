@@ -24,7 +24,15 @@ namespace image_bot.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Create a new User
+        /// </summary>
+        /// <param name="chatId"></param>
+        /// <response code="201">Returns the newly created user</response>
+        /// <response code="400">If the client puts invalid data into the request</response>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(BotUser))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Post(long chatId)
         { 
             BotUser user = new BotUser() { ChatId = chatId };
@@ -35,8 +43,17 @@ namespace image_bot.Controllers
             return Created(uri, user);
         }
 
+
+        /// <summary>
+        /// Get a User by ChatId
+        /// </summary>
+        /// <param name="chatId"></param>
+        /// <response code="200">Returns the User</response>
+        /// <response code="404">If the client puts non-existing userId into the request</response>
         [Route("{chatId}")]
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BotUser))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetByChatId(long chatId)
         {
             BotUser user = db.BotUsers.Where(b => b.ChatId == chatId)
@@ -51,8 +68,19 @@ namespace image_bot.Controllers
             return new OkObjectResult(user);
         }
 
+
+        /// <summary>
+        /// Create or Update a User by ChatId
+        /// </summary>
+        /// <param name="chatId"></param>
+        /// <response code="200">Updates the User</response>
+        /// <response code="201">Returns a new User</response>
+        /// <response code="409">If update is impossible</response>"
         [Route("{chatId}")]
         [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(BotUser))]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> Put(long chatId, [FromBody]BotUser user)
         {
             if(db.BotUsers.Any(b => b.ChatId == chatId))
@@ -68,8 +96,16 @@ namespace image_bot.Controllers
             return Created(uri, user);
         }
 
+        /// <summary>
+        /// Get a User's request by ChatId
+        /// </summary>
+        /// <param name="chatId"></param>
+        /// <response code="200">Returns the User's request</response>
+        /// <response code="404">If the client puts non-existing userId into the request</response>
         [Route("{chatId}/requests")]
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BotUser))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetRequests(long chatId)
         {
             BotUser user = db.BotUsers.Where(b => b.ChatId == chatId).FirstOrDefault();
@@ -93,8 +129,16 @@ namespace image_bot.Controllers
             }
         }
 
+        /// <summary>
+        /// Delete a User by ChatId
+        /// </summary>
+        /// <param name="chatId"></param>
+        /// <response code="204">Deletes the User</response>
+        /// <response code="404">If the client puts non-existing chatId into the request</response>
         [Route("{chatId}")]
         [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(long chatId)
         {
             BotUser user = db.BotUsers.Where(b => b.ChatId == chatId).FirstOrDefault();
