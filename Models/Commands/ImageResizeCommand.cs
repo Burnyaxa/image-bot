@@ -36,17 +36,17 @@ namespace image_bot.Models.Commands
             HttpClient client = new HttpClient();
             ImageToResize image;
 
-            url = string.Format(AppSettings.Url, "api/users/") + chatId.ToString();
+            url = string.Format(AppSettings.Url, "api/1.0.0/users/") + chatId.ToString();
             response = await client.GetAsync(url);
             result = await response.Content.ReadAsStringAsync();
             user = JsonConvert.DeserializeObject<BotUser>(result);
 
-            url = string.Format(AppSettings.Url, "api/users/") + chatId.ToString() + "/requests";
+            url = string.Format(AppSettings.Url, "api/1.0.0/users/") + chatId.ToString() + "/requests";
 
             response = await client.GetAsync(url);
             if (!response.IsSuccessStatusCode)
             {
-                url = string.Format(AppSettings.Url, "api/image-resize-requests");
+                url = string.Format(AppSettings.Url, "api/1.0.0/image-resize-requests");
                 query = new Dictionary<string, string>()
                 {
                     ["userId"] = user.Id.ToString()
@@ -55,7 +55,7 @@ namespace image_bot.Models.Commands
 
                 user.CurentCommand = BotCommand.Resize;
 
-                url = string.Format(AppSettings.Url, "api/users/") + chatId.ToString();
+                url = string.Format(AppSettings.Url, "api/1.0.0/users/") + chatId.ToString();
                 await client.PutAsync(url, new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json"));
 
                 await botClient.SendTextMessageAsync(chatId, "Please input parameters of the future image in format heightxwidth.", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
@@ -72,7 +72,7 @@ namespace image_bot.Models.Commands
                     request.Height = Convert.ToInt32(height);
                     request.Width = Convert.ToInt32(width);
                     request.Status = ImageResizeStatus.AwaitingImage;
-                    url = string.Format(AppSettings.Url, "api/image-resize-requests/") + user.Id;
+                    url = string.Format(AppSettings.Url, "api/1.0.0/image-resize-requests/") + user.Id;
                     //var data = new Dictionary<string, string>()
                     //{
                     //    ["chatId"] = chatId.ToString(),
@@ -85,7 +85,7 @@ namespace image_bot.Models.Commands
                 case ImageResizeStatus.AwaitingImage:
                     var file = await botClient.GetFileAsync(message.Photo.LastOrDefault()?.FileId);
                     string baseUrl = string.Format("https://api.telegram.org/file/bot{0}/{1}", AppSettings.Key, file.FilePath);
-                    url = string.Format(AppSettings.Url, "api/image/resize");
+                    url = string.Format(AppSettings.Url, "api/1.0.0/image/resize");
                     image = new ImageToResize()
                     {
                         Url = baseUrl,
@@ -101,7 +101,7 @@ namespace image_bot.Models.Commands
                     result = await response.Content.ReadAsStringAsync();
                     ImageUploadResult imageUrl = JsonConvert.DeserializeObject<ImageUploadResult>(result);
                     await botClient.SendPhotoAsync(chatId, imageUrl.Url.ToString());
-                    url = string.Format(AppSettings.Url, "api/image-resize-requests/") + user.Id;
+                    url = string.Format(AppSettings.Url, "api/1.0.0/image-resize-requests/") + user.Id;
                     //query = new Dictionary<string, string>
                     //{
                     //    ["chatId"] = chatId.ToString(),
@@ -109,7 +109,7 @@ namespace image_bot.Models.Commands
                     await client.DeleteAsync(url);
                     user.CurentCommand = BotCommand.Start;
 
-                    url = string.Format(AppSettings.Url, "api/users/") + chatId.ToString();
+                    url = string.Format(AppSettings.Url, "api/1.0.0/users/") + chatId.ToString();
                     await client.PutAsync(url, new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json"));
                     break;                       
             }

@@ -12,7 +12,7 @@ using System.Net;
 
 namespace image_bot.Controllers
 {
-    [Route("api/image")]
+    [Route("api/1.0.0/image")]
     [ApiController]
     [Produces("application/json")]
     public class ImageController : ControllerBase

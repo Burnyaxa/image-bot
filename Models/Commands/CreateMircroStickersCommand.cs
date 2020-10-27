@@ -38,17 +38,17 @@ namespace image_bot.Models.Commands
             StickerToResize stickerToResize;
 
             client = new HttpClient();
-            url = string.Format(AppSettings.Url, "api/users/") + chatId.ToString();
+            url = string.Format(AppSettings.Url, "api/1.0.0/users/") + chatId.ToString();
             response = await client.GetAsync(url);
             result = await response.Content.ReadAsStringAsync();
             user = JsonConvert.DeserializeObject<BotUser>(result);
 
-            url = string.Format(AppSettings.Url, "api/users/") + chatId.ToString() + "/requests";
+            url = string.Format(AppSettings.Url, "api/1.0.0/users/") + chatId.ToString() + "/requests";
 
             response = await client.GetAsync(url);
             if (!response.IsSuccessStatusCode)
             {
-                url = string.Format(AppSettings.Url, "api/micro-sticker-requests");
+                url = string.Format(AppSettings.Url, "api/1.0.0/micro-sticker-requests");
                 query = new Dictionary<string, string>()
                 {
                     ["userId"] = user.Id.ToString()
@@ -57,7 +57,7 @@ namespace image_bot.Models.Commands
 
                 user.CurentCommand = BotCommand.CreateMicroStickers;
 
-                url = string.Format(AppSettings.Url, "api/users/") + chatId.ToString();
+                url = string.Format(AppSettings.Url, "api/1.0.0/users/") + chatId.ToString();
                 await client.PutAsync(url, new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json"));
 
                 await botClient.SendTextMessageAsync(chatId, "Please input name of the future sticker pack.", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
@@ -73,7 +73,7 @@ namespace image_bot.Models.Commands
                     string name = message.Text;
                     request.Name = name;
                     request.Status = MicroStickersStatus.AwaitingSticker;
-                    url = string.Format(AppSettings.Url, "api/micro-sticker-requests/") + user.Id;
+                    url = string.Format(AppSettings.Url, "api/1.0.0/micro-sticker-requests/") + user.Id;
                     await client.PutAsync(url, new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json"));
 
                     await botClient.SendTextMessageAsync(chatId, "Good. Now send me a sticker.", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
@@ -86,7 +86,7 @@ namespace image_bot.Models.Commands
                     foreach (var sticker in stickerSet.Stickers) {
                         var file = await botClient.GetFileAsync(sticker.FileId);
                         string baseUrl = string.Format("https://api.telegram.org/file/bot{0}/{1}", AppSettings.Key, file.FilePath);
-                        url = string.Format(AppSettings.Url, "api/sticker/resize");
+                        url = string.Format(AppSettings.Url, "api/1.0.0/sticker/resize");
                         stickerToResize = new StickerToResize()
                         {
                             Url = baseUrl,
@@ -119,12 +119,12 @@ namespace image_bot.Models.Commands
                     await botClient.SendTextMessageAsync(chatId, "Enjoy your micro-stickers :)", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
                     await botClient.SendStickerAsync(chatId, newStickers.Stickers.First().FileId);
 
-                    url = string.Format(AppSettings.Url, "api/micro-sticker-requests/") + user.Id;
+                    url = string.Format(AppSettings.Url, "api/1.0.0/micro-sticker-requests/") + user.Id;
 
                     await client.DeleteAsync(url);
                     user.CurentCommand = BotCommand.Start;
 
-                    url = string.Format(AppSettings.Url, "api/users/") + chatId.ToString();
+                    url = string.Format(AppSettings.Url, "api/1.0.0/users/") + chatId.ToString();
                     await client.PutAsync(url, new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json"));
 
                     break;

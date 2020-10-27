@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace image_bot.Controllers
 {
-    [Route("api/users")]
+    [Route("api/1.0.0/users")]
     [ApiController]
     [Produces("application/json")]
     public class UserController : ControllerBase
@@ -39,7 +39,7 @@ namespace image_bot.Controllers
             if (db.BotUsers.Any(b => b.ChatId == user.ChatId)) return BadRequest();
             db.BotUsers.Add(user);
             await db.SaveChangesAsync();
-            string uri = String.Format(AppSettings.Url, "api/users/") + user.ChatId.ToString();
+            string uri = String.Format(AppSettings.Url, "api/1.0.0/users/") + user.ChatId.ToString();
             return Created(uri, user);
         }
 
@@ -92,7 +92,7 @@ namespace image_bot.Controllers
             }
             db.BotUsers.Add(user);
             await db.SaveChangesAsync();
-            string uri = String.Format(AppSettings.Url, "api/users/") + user.ChatId.ToString();
+            string uri = String.Format(AppSettings.Url, "api/1.0.0/users/") + user.ChatId.ToString();
             return Created(uri, user);
         }
 

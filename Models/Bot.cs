@@ -31,7 +31,7 @@ namespace image_bot.Models
 
 
             botClient = new TelegramBotClient(AppSettings.Key);
-            string hook = string.Format(AppSettings.Url, "api/message/update");
+            string hook = string.Format(AppSettings.Url, "api/1.0.0/message/update");
             await botClient.SetWebhookAsync(hook);
             
             return botClient;
