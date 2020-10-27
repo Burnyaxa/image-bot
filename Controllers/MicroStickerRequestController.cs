@@ -55,6 +55,22 @@ namespace image_bot.Controllers
             return new OkObjectResult(request);
         }
 
+        [Route("{userId}")]
+        [HttpPut]
+        public async Task<IActionResult> Put(int userId, [FromBody] CreateMicroStickersRequest request)
+        {
+            if (db.CreateMicroStickersRequests.Any(b => b.UserId == userId))
+            {
+                db.Entry(request).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                await db.SaveChangesAsync();
+                return Ok();
+            }
+            db.CreateMicroStickersRequests.Add(request);
+            await db.SaveChangesAsync();
+            string uri = String.Format(AppSettings.Url, "api/micro-sticker-requests/") + request.User.Id.ToString();
+            return Created(uri, request);
+        }
+
 
         [Route("create-request")]
         [HttpPost]
