@@ -33,7 +33,7 @@ namespace image_bot.Controllers
             {
                 File = new FileDescription(image.Url),
                 Transformation = new Transformation()
-                    .Effect(image.Filter.ToString())
+                    .Effect("art:" + image.Filter.ToString())
             };
             // image uploaded
             // uploadResult has url

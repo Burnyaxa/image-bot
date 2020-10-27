@@ -72,12 +72,20 @@ namespace image_bot.Models.Commands
             switch (request.Status)
             {
                 case ApplyFilterStus.AwaitingFilterSelect:
+                    
+                    if (message.Text == "view gallery")
+                    {
+                        await botClient.SendPhotoAsync(chatId, "https://res.cloudinary.com/drnmey6bv/image/upload/v1603798791/image-bot/galery.png");
+                        return;
+                    }
+                    
                     request.ChosenFilter = (AvailableFilters)Enum.Parse(typeof(AvailableFilters), message.Text);
+                    
                     request.Status = ApplyFilterStus.AwaitingImage;
                     url = string.Format(AppSettings.Url, "api/apply-filter-requests/") + user.Id;
 
                     await client.PutAsync(url, new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json"));
-                    await botClient.SendTextMessageAsync(chatId, "Good. Now send me your image.", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                    await botClient.SendTextMessageAsync(chatId, "Good. Now send me your image.", replyMarkup: new ReplyKeyboardRemove(), parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
                     break;
                 case ApplyFilterStus.AwaitingImage:
                     var file = await botClient.GetFileAsync(message.Photo.LastOrDefault()?.FileId);
@@ -203,7 +211,7 @@ namespace image_bot.Models.Commands
         private ReplyKeyboardMarkup createKeyboard()
         {
             var rkm = new ReplyKeyboardMarkup();
-            rkm.OneTimeKeyboard = true;
+            //rkm.OneTimeKeyboard = true;
             KeyboardButton[] kewboardRow = new KeyboardButton[3];
             var rows = new List<KeyboardButton[]>();
             var cols = new List<KeyboardButton>();
