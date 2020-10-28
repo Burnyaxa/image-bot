@@ -46,10 +46,37 @@ https://s3.amazonaws.com/assets.mockflow.com/app/wireframepro/company/C4fb765ef5
 - Filter Controller, Image Controller, Sticker Controller fulfil the request. By means Cloudinary.Net these Controllers apply transformation on requests. Cloudinary.Net stores transformed images for further access.
 - After transformation complete Message Controller recieves it's result and sends it to the User by means of Telegram.Bot.
 ## API Design Guideline
+- Based on: https://docs.microsoft.com/en-us/azure/architecture/best-practices/api-design
 - Protocol: HTTPS
 - Format: JSON
 - REST API
 - Singular Nouns for Elements-Resources, Plural Nouns for Elements-Collections
 - API Versioning : api/{version}/... The base version is 1.0.0. Minor fixes increment last digit. New features inside existing entities increment middle digit. Global changes increment first digit.
-- GET methods return 200(OK) on success and 404(Not Found if the resource cannot be found. No body required. POST methods returns 201(Created) on successful resource creation and the URI of the new resource is included in the Location header of the response. The response body contains a representation of the resource. If the method does some processing but does not create a new resource, the method can return HTTP status code 204(No Content). If the client puts invalid data into the request, the server should return HTTP status code 400 (Bad Request). POST methods might have a body. PUT methods return 201(Created) on successful resource creation. If the method updates an existing resource, it returns either 200 (OK) or 204 (No Content). When updating is not possible then the method returns 409(Conflict). PUT methods require body. DELETE methods return 204(No Content) on a successful delete. If the resource doesn't exist, the web server return 404 (Not Found). No body required.
-- No other methods available.
+### Methods Description
+### Default Error Body
+![Error Body Schema](ErrorBodySchema.png "Error Body Schema")
+- Fields marked with * are required
+- Error Type contains information on the origin of an error (DB, Validaton etc)
+- Message contains detail information on what happened
+- Ttile describes the main problem that happened.
+- AdditionalInformation may be needed for complex errors.
+#### GET
+- 200(OK) on success. Returns the required object at response body
+- 404(Not Found) if the resource cannot be found. Returns the default error body 
+- No body required.
+#### POST
+- 201(Created) on a successful resource creation. Returns the URI of the created object at the Location header of the response and the created object itself at the response body
+- 204(No content) if some operation were made, but resource was not created. There is no additional content to send in the response payload body.
+- 400(Bad Request) if the client puts invalid data into the request. Returns the default error body with the additional information about the data caused error.
+- Might have a body with a resource to create.
+#### PUT
+- 201(Created) on a successful resource creation. Returns the URI of the created object at the Location header of the response and the created object itself at the response body
+- 200(OK) or 204(No content) if the existing resource was updated. There is no additional content to send in the response payload body.
+- 409(Conflict) when the resource update is not possible. Returns the default error body with the additional information about the data cannot be updated.
+- Body with a resource to create or update is required.
+#### DELETE
+- 204(No Content) on a successful resource delete. There is no additional content to send in the response payload body
+- 404(Not Found) if the resource cannot be found. Returns the default error body
+- No body required.
+### Non-Standart Methods
+Not-Standart methods are not available
