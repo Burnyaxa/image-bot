@@ -40,7 +40,7 @@ A Telegram bot that is capable of resizing images, applying filters and creating
 https://s3.amazonaws.com/assets.mockflow.com/app/wireframepro/company/C4fb765ef57424da78bb52e31a787de4e/projects/M319477100ced05987ca571ac0ab38ca21600159454912/pages/e7af36e065e54b5caf2a6605d947714b/image/e7af36e065e54b5caf2a6605d947714b.png 
 ## High-Level Decisions
 ### Development View
-![Development View](DevView.png "Development View")
+![Development View](DevView.jpg "Development View")
 - User interacts with the application via Telegram Client, which send update messages every time a new chat message is sent to a client. Webhook technology is used for this purpose. Message Controller acts as a mediator making decisions on what API call should be performed. User command sent in chat are translated into API calls.
 - User Controller keeps track of all the users interacting with the Bot. Apply Filter Request Controller, Image Resize Request Controller, Micro Sticker Request Controller represent the state and parameters of a particular User request performed at the moment.
 - Filter Controller, Image Controller, Sticker Controller fulfil the request. By means Cloudinary.Net these Controllers apply transformation on requests. Cloudinary.Net stores transformed images for further access.
