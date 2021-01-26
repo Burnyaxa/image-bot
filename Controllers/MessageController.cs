@@ -47,7 +47,7 @@ namespace image_bot.Controllers
             {
                 if (command.Contains(message))
                 {
-                    await command.Execute(message, botClient);
+                    command.Execute(message, botClient);
                     return Ok();
                 }
             }
@@ -55,14 +55,13 @@ namespace image_bot.Controllers
             switch (botCommand)
             {
                 case Models.BotCommand.Resize:
-                    await commands.Where(c => c.Name == "/resize").First().Execute(message, botClient);
+                    commands.Where(c => c.Name == "/resize").First().Execute(message, botClient);
                     return Ok();
                 case Models.BotCommand.ApplyFilter:
-                    await commands.Where(c => c.Name == "/filter").First().Execute(message, botClient);
+                    commands.Where(c => c.Name == "/filter").First().Execute(message, botClient);
                     return Ok();
                 case Models.BotCommand.CreateMicroStickers:
-                    Task.Delay(1).ContinueWith((task) => { return Ok(); });
-                    await commands.Where(c => c.Name == "/micro-stickers").First().Execute(message, botClient);
+                    commands.Where(c => c.Name == "/micro-stickers").First().Execute(message, botClient);
                     return Ok();
             }
             return Ok();
